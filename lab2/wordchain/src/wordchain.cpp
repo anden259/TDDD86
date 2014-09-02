@@ -31,9 +31,21 @@ bool is_word(string word){
     }else{
         return false;
     }
-
-
 }
+
+vector<string> get_near(string word){
+    vector<string> ret;
+    // word false !!!?
+    for(int index=0;index<word.length();index++){
+        for(int c=0;c<alphabet.length();c++){
+            word[index]=c;
+            if(is_word(word)){
+                ret.insert(word);
+            }
+        }
+    }
+}
+
 
 
 int main() {
@@ -43,12 +55,6 @@ int main() {
     cout << endl;
 
     fillmap();
-
-    cout << "aal is a word? " << is_word("aa")<< endl;
-    cout << "aal is a word? " << is_word("aal") << " vad fan " << is_word("aa")  << endl;
-    cout << "aal is a word? " << is_word("aal") << " vad fan " << is_word("aa")  << endl;
-    cout << "aal is a word? " << is_word("aal") << " vad fan " << is_word("aa")  << endl;
-
 
     cout << "Please type two words: ";
 
