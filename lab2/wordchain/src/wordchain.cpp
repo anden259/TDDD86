@@ -36,15 +36,51 @@ bool is_word(string word){
 vector<string> get_near(string word){
     vector<string> ret;
     // word false !!!?
-    for(int index=0;index<word.length();index++){
-        for(int c=0;c<alphabet.length();c++){
-            word[index]=c;
-            if(is_word(word)){
-                ret.insert(word);
+
+    for(unsigned int index=0;index<word.length();index++){
+        string tmp=word;
+        for(unsigned int c=0;c<alphabet.length();c++){
+            //cout <<"befor word change : " << word << endl;
+            tmp[index]=alphabet[c];
+            //cout <<"after change word : " << word << endl;
+            if(is_word(tmp)){
+              //  cout <<"tha word I added is : " << word << endl;
+                ret.insert(ret.end(),tmp);
+            }
+        }
+    }
+    return ret;
+}
+
+void print_stack(stack<string>& my_stack ){
+
+    for(auto word:my_stack){
+        cout << word << " ";
+    }
+    cout << endl;
+}
+
+
+void wordChain(string w1,string w2){
+    queue<stack<string>> my_queue;
+    my_queue.push(new stack <string> (w1));
+
+    while(my_queue.size()!=0){
+        stack <string> tmp_stack=my_queue.pop();
+        if(tmp_stack.peek()==w2){
+            printf("Chain from %s back to %s:\n",w1,w2);
+            print_stack(tmp_stack);
+            return;
+        }else{
+
+            for(auto word:get_near(w1)){
+                tmp_stack.push(word);
+                my_queue.push(tmp_stack);
             }
         }
     }
 }
+
 
 
 
@@ -56,7 +92,17 @@ int main() {
 
     fillmap();
 
+
+
+
+
     cout << "Please type two words: ";
+    string w1,w2;
+
+    cin >> w1 >> w2;
+
+    wordChain(w1,w2);
+
 
     // TODO: Finish the program!
 
