@@ -35,16 +35,12 @@ bool is_word(string word){
 
 vector<string> get_near(string word){
     vector<string> ret;
-    // word false !!!?
-
+    is_word(word);  //to make word false!!!
     for(unsigned int index=0;index<word.length();index++){
         string tmp=word;
         for(unsigned int c=0;c<alphabet.length();c++){
-            //cout <<"befor word change : " << word << endl;
             tmp[index]=alphabet[c];
-            //cout <<"after change word : " << word << endl;
             if(is_word(tmp)){
-              //  cout <<"tha word I added is : " << word << endl;
                 ret.insert(ret.end(),tmp);
             }
         }
@@ -52,10 +48,11 @@ vector<string> get_near(string word){
     return ret;
 }
 
-void print_stack(stack<string>& my_stack ){
+void print_stack(stack<string> my_stack ){
 
-    for(auto word:my_stack){
-        cout << word << " ";
+    while(!my_stack.empty()){
+        cout << my_stack.top() << " ";
+        my_stack.pop();
     }
     cout << endl;
 }
@@ -63,22 +60,27 @@ void print_stack(stack<string>& my_stack ){
 
 void wordChain(string w1,string w2){
     queue<stack<string>> my_queue;
-    my_queue.push(new stack <string> (w1));
+    stack <string> tmp_stack;
+    tmp_stack.push(w1);
+    my_queue.push(tmp_stack);
 
-    while(my_queue.size()!=0){
-        stack <string> tmp_stack=my_queue.pop();
-        if(tmp_stack.peek()==w2){
-            printf("Chain from %s back to %s:\n",w1,w2);
+    do{
+
+        tmp_stack=my_queue.front();
+        my_queue.pop();
+        if(tmp_stack.top() == w2){
+            printf("Chain from %s back to %s:\n",w1.c_str(),w2.c_str());
             print_stack(tmp_stack);
             return;
         }else{
 
-            for(auto word:get_near(w1)){
-                tmp_stack.push(word);
-                my_queue.push(tmp_stack);
+            for(auto word:get_near(tmp_stack.top())){
+                stack<string> tmp2_stack = tmp_stack;
+                tmp2_stack.push(word);
+                my_queue.push(tmp2_stack);
             }
         }
-    }
+    } while(!my_queue.empty());
 }
 
 
@@ -103,7 +105,7 @@ int main() {
 
     wordChain(w1,w2);
 
-
+    cout <<"Have a nice day."<<endl;
     // TODO: Finish the program!
 
     return 0;
