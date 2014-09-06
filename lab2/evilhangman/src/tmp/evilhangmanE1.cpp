@@ -35,6 +35,7 @@ string get_family_string(string word, char c, string start){
    return start;
 }
 
+
 template<typename T>
 map<string, T> getfamily(T& word_list, char c, string start){
     map<string, T> ret;
@@ -52,7 +53,7 @@ map<string, T> getfamily(T& word_list, char c, string start){
 //template<typename T>
 pair<string, vector<string> > get_bigest_word_list(map<string, vector<string> >& family_map){
     pair <string, vector<string> > ret_map_pair;
-    int max_len(0), tmp(0);
+    int max_len(0), tmp;
 
     for(auto pair_in_map:family_map){
         tmp = pair_in_map.second.size();
@@ -63,47 +64,20 @@ pair<string, vector<string> > get_bigest_word_list(map<string, vector<string> >&
     }
     return ret_map_pair;
 }
-
-int number_of_letters(vector<string>& word_list){
-    string letters="";
-    for (auto word:word_list){
-        for(auto c:word){
-            if(letters.find(c)==string::npos){
-               letters+=c;
-            }
-        }
-    }
-    return letters.size();
-}
-
-//template<typename T>
-pair<string, vector<string> > get_best_word_list(map<string, vector<string> >& family_map){
-    pair <string, vector<string> > ret_map_pair;
-    int max_len(0), tmp(0);
-
-    for(auto pair_in_map:family_map){
-        tmp = number_of_letters(pair_in_map.second);
-        if(tmp > max_len){
-            max_len = tmp;
-            ret_map_pair = pair_in_map;
-        }
-    }
-    return ret_map_pair;
-}
-
 int count_dash(string word){
     int ret(0);
     for (char c : word){
-        if(c == '-') ret++;
+        if(c=='-') ret++;
     }
     return ret;
 }
+
 
 //template<typename T>
 pair<string, vector<string> > get_most_dashes_word_list(map<string, vector<string> >& family_map){
     pair <string, vector<string> > ret_map_pair;
     int max_dash(0), tmp_dash(0);
-    for(auto pair_in_map : family_map){
+    for(auto pair_in_map:family_map){
         tmp_dash = count_dash(pair_in_map.first);
         if(tmp_dash > max_dash){
             max_dash = tmp_dash;
@@ -112,6 +86,7 @@ pair<string, vector<string> > get_most_dashes_word_list(map<string, vector<strin
     }
     return ret_map_pair;
 }
+
 
 template<typename T>
 int get_valid_length(T& myMap){
@@ -124,7 +99,6 @@ int get_valid_length(T& myMap){
     }while(myMap.find(input) == myMap.end());
     return input;
 }
-
 int get_guesses(){
     int input;
     do{
@@ -162,6 +136,7 @@ char get_letter(string guesst){
     return ret;
 }
 
+
 void play_game(int len, int gue, bool show, vector<string> word_list){
     string letters_guesst = "", word_to_guess(len, '-');
     char letter;
@@ -175,10 +150,8 @@ void play_game(int len, int gue, bool show, vector<string> word_list){
 
         map<string, vector<string> > family = getfamily(word_list, letter, word_to_guess);
         pair<string, vector<string> > word_list_pair;
-        if (gue>10){
+        if (gue>1){
             word_list_pair = get_bigest_word_list(family);
-        }else if(gue>1){
-            word_list_pair = get_best_word_list(family);
         }else{
             word_list_pair = get_most_dashes_word_list(family);
         }
@@ -186,6 +159,7 @@ void play_game(int len, int gue, bool show, vector<string> word_list){
         if(word_to_guess == word_list_pair.first){
             gue--;
         }
+
         word_to_guess = word_list_pair.first;
         word_list = word_list_pair.second;
     }
@@ -215,6 +189,7 @@ void play_game_loop(T& myMap){
     }while(input != 'q');
     return;
 }
+
 
 int main() {
     map<int, vector<string> > myMap;
