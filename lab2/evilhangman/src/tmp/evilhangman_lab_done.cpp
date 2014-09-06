@@ -8,7 +8,7 @@
 using namespace std;
 
 const string alphabet  = "abcdefghijklmnopqrstuvwxyz";
-
+// fillmap files the map with nummber of letters and a vector with all words with that length
 template<typename T>
 void fillmap(map<int, T>& myMap){
     string word;
@@ -24,6 +24,8 @@ void fillmap(map<int, T>& myMap){
     myReader.close();
 }
 
+// get_family_string return the family string of that word
+// baste on the word start
 string get_family_string(string word, char c, string start){
    for (size_t i = 0; i < word.length(); i++){
        if (start[i] == '-' && word[i] == c){
@@ -34,7 +36,7 @@ string get_family_string(string word, char c, string start){
    return start;
 }
 
-
+// getfamily returns a map with familly string as key and a vector of string as word list
 template<typename T>
 map<string, T> getfamily(T& word_list, char c, string start){
     map<string, T> ret;
@@ -49,6 +51,8 @@ map<string, T> getfamily(T& word_list, char c, string start){
     return ret;
 }
 
+// returns a pair with family string as key and a vector as element
+// the pair returnd is the one with bigest vector
 //template<typename T>
 pair<string, vector<string> > get_bigest_word_list(map<string, vector<string> >& family_map){
     pair <string, vector<string> > ret_map_pair;
@@ -64,6 +68,7 @@ pair<string, vector<string> > get_bigest_word_list(map<string, vector<string> >&
     return ret_map_pair;
 }
 
+// loop to get the user to enter valid number of letters
 template<typename T>
 int get_valid_length(T& myMap){
     int input;
@@ -75,6 +80,8 @@ int get_valid_length(T& myMap){
     }while(myMap.find(input) == myMap.end());
     return input;
 }
+
+//loop to get nummber of guesses
 int get_guesses(){
     int input;
     do{
@@ -86,6 +93,7 @@ int get_guesses(){
     return input;
 }
 
+// return true if the user wonts to see the word list
 bool show_list(){
     char input;
     cout << "do you wont to see the word list ? type y or n : ";
@@ -93,6 +101,7 @@ bool show_list(){
     return  input == 'y';
 }
 
+// print a word list
 template<typename T>
 void print_word_list(T& word_list){
     for (auto word:word_list){
@@ -102,6 +111,7 @@ void print_word_list(T& word_list){
     return;
 }
 
+// returns the new! letter enterd by the user
 char get_letter(string guesst){
     char ret;
     do{
@@ -112,7 +122,7 @@ char get_letter(string guesst){
     return ret;
 }
 
-
+// start the game
 void play_game(int len, int gue, bool show, vector<string> word_list){
     string letters_guesst = "", word_to_guess(len, '-');
     char letter;
@@ -142,6 +152,7 @@ void play_game(int len, int gue, bool show, vector<string> word_list){
     return;
 }
 
+// the loop to restart the game after played
 template<typename T>
 void play_game_loop(T& myMap){
     char input;
@@ -160,7 +171,7 @@ void play_game_loop(T& myMap){
     return;
 }
 
-
+// main to start the program
 int main() {
     map<int, vector<string> > myMap;
     fillmap(myMap);
