@@ -26,11 +26,12 @@ public:
 private:
     Tile* myTile;
     Tile* first;
-    Tile* end;
+    Tile* last;
     size_t allocSize;
-    unsigned int size;
+    size_t size;
 
     void expand();
+    void removeByIndex(int index);
 };
 
 #endif // TILELIST_H

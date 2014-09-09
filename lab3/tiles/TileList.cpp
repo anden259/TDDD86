@@ -8,17 +8,17 @@
 
 TileList::TileList()
 {
-    allocSize=10;
-    size=0;
+    allocSize = 10;
+    size = 0;
     myTile = new Tile[allocSize];
-    first=nullptr;
-    end=nullptr;
+    first = nullptr;
+    last = nullptr;
 
 }
 
 TileList::TileList(const TileList &other)
 {
-    // TODO: write this member
+    *this = other;
 }
 
 TileList::~TileList()
@@ -28,38 +28,55 @@ TileList::~TileList()
 
 void TileList::addTile(Tile tile)
 {
-    if(size==allocSize){
+    if(size == allocSize){
         expand();
     }
 
-    if(end == nullptr){
+    if(last == nullptr){
         first = myTile;
-        end = myTile;
+        last = myTile;
     }else{
-        ++end;
+        ++last;
     }
 
-    *end = tile;
     ++size;
+    *last = tile;
 
     return;
 }
 
 void TileList::drawAll(QGraphicsScene* scene)
 {
-    for(Tile* current = first; current <= end; ++current){
+    for(Tile* current = first; current <= last; ++current){
         current->draw(scene);
     }
 }
 
 int TileList::indexOfTopTile(int x, int y)
 {
-    // TODO: write this member
+    int index = -1;
+    for(size_t i = 0; i < size; ++i){
+        if(first[i].contains(x, y)){
+            //++index;
+            index = i;
+        }
+    }
+    std::cout << "indexOf: " << size << std::endl;
+    return index;
 }
 
 void TileList::raise(int x, int y)
 {
-    // TODO: write this member
+    int i = indexOfTopTile(x, y);
+
+    if (i == -1){
+        return;
+    }
+
+    Tile tile = myTile[i];
+    removeByIndex(i);
+    addTile(tile);
+    return;
 }
 
 void TileList::lower(int x, int y)
@@ -69,26 +86,43 @@ void TileList::lower(int x, int y)
 
 void TileList::remove(int x, int y)
 {
-    // TODO: write this member
+    removeByIndex(indexOfTopTile(x, y));
+    return;
 }
 
 void TileList::removeAll(int x, int y)
 {
-    // TODO: write this member
+    int i = indexOfTopTile(x, y);
+    while(i != -1){
+        removeByIndex(i);
+        i = indexOfTopTile(x, y);
+    }
 }
 
 void TileList::expand(){
-    int newAllocSize = allocSize*2;
+    size_t newAllocSize = allocSize*2;
     Tile* newTile = new Tile[newAllocSize];
-    Tile* newCurrent = newTile;
-    Tile* current = first;
-    for(; current <= end; ++current){
-        newCurrent=std::move(current);
+
+    for(size_t i = 0; i < allocSize; ++i){
+        newTile[i] = std::move(myTile[i]);
     }
 
+    last = &newTile[allocSize-1];
+    allocSize = newAllocSize;
     delete[] myTile;
     myTile = newTile;
-    first = myTile;
-    end = current;
+    first = newTile;
     return;
+}
+
+void TileList::removeByIndex(int index){
+    if(index < 0){
+        return;
+    }
+    int prevIndex = index;
+    for(size_t currentIndex = index+1; currentIndex < size; ++currentIndex){
+        myTile[prevIndex] = myTile[currentIndex];
+    }
+    --last;
+    --size;
 }
