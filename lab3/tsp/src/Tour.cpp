@@ -9,9 +9,9 @@
 #include "Node.h"
 #include "Point.h"
 
-Tour::Tour()
+Tour::Tour(): startNode(nullptr)
 {
-    // TODO: write this member
+
 }
 
 Tour::~Tour()
