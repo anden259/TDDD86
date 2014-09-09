@@ -11,7 +11,6 @@ TileList::TileList()
     allocSize = 10;
     size = 0;
     myTile = new Tile[allocSize];
-    first = nullptr;
     last = nullptr;
 
 }
@@ -33,7 +32,6 @@ void TileList::addTile(Tile tile)
     }
 
     if(last == nullptr){
-        first = myTile;
         last = myTile;
     }else{
         ++last;
@@ -47,7 +45,7 @@ void TileList::addTile(Tile tile)
 
 void TileList::drawAll(QGraphicsScene* scene)
 {
-    for(Tile* current = first; current <= last; ++current){
+    for(Tile* current = myTile; current <= last; ++current){
         current->draw(scene);
     }
 }
@@ -56,12 +54,11 @@ int TileList::indexOfTopTile(int x, int y)
 {
     int index = -1;
     for(size_t i = 0; i < size; ++i){
-        if(first[i].contains(x, y)){
+        if(myTile[i].contains(x, y)){
             //++index;
             index = i;
         }
     }
-    std::cout << "indexOf: " << size << std::endl;
     return index;
 }
 
@@ -81,7 +78,16 @@ void TileList::raise(int x, int y)
 
 void TileList::lower(int x, int y)
 {
-    // TODO: write this member
+    int i = indexOfTopTile(x, y);
+
+    if (i == -1){
+        return;
+    }
+
+    Tile tile = myTile[i];
+    removeByIndex(i);
+    addTileFirst(tile);
+    return;
 }
 
 void TileList::remove(int x, int y)
@@ -111,7 +117,6 @@ void TileList::expand(){
     allocSize = newAllocSize;
     delete[] myTile;
     myTile = newTile;
-    first = newTile;
     return;
 }
 
@@ -122,7 +127,25 @@ void TileList::removeByIndex(int index){
     int prevIndex = index;
     for(size_t currentIndex = index+1; currentIndex < size; ++currentIndex){
         myTile[prevIndex] = myTile[currentIndex];
+        ++prevIndex;
     }
     --last;
     --size;
+}
+
+
+void TileList::addTileFirst(Tile tile){
+    if(size == allocSize){
+        expand();
+    }
+
+    size_t currentIndex = size - 1;
+    for(size_t next = size; next > 0; --next){
+        myTile[next] = myTile[currentIndex];
+        --currentIndex;
+    }
+
+    myTile[0] = tile;
+    ++last;
+    ++size;
 }

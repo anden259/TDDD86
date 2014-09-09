@@ -23,15 +23,16 @@ public:
     void remove(int x, int y);
     void removeAll(int x, int y);
 
+
 private:
     Tile* myTile;
-    Tile* first;
     Tile* last;
     size_t allocSize;
     size_t size;
 
     void expand();
     void removeByIndex(int index);
+    void addTileFirst(Tile tile);
 };
 
 #endif // TILELIST_H
