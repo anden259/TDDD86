@@ -1,2 +1,9 @@
 life/Life.pro.user
 life/Life.pro.user.d9f3484
+*.o
+*.user
+*.exe
+lab3/build-Tiles-Desktop_Qt_5_3_MinGW_32bit-Debug/debug/moc_mainwindow.cpp
+lab3/build-Tiles-Desktop_Qt_5_3_MinGW_32bit-Debug/Makefile
+*.Debug
+*.Release
