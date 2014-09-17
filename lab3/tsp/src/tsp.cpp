@@ -37,12 +37,18 @@ int main(int argc, char *argv[]) {
     view->show();
 
     // run insertion heuristic
+    Tour tour1(Point(100.0, 100.0), Point(500.0, 100.0), Point(500.0, 500.0), Point(100.0, 500.0));
+    tour1.show();
+    cout << "size : " << tour1.size() << endl;
+    cout << "Tour distance: " << tour1.distance() << endl;
+
     Tour tour;
     double x;
     double y;
     while (input >> x >> y) {
         Point p(x, y);
-        tour.insertNearest(p);
+        //tour.insertNearest(p);
+        tour.insertSmallest(p);
         //uncomment the 4 lines below to animate
         //tour.draw(scene);
         //std::chrono::milliseconds dura(50);

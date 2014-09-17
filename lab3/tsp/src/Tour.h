@@ -10,10 +10,12 @@
 #include "Node.h"
 #include "Point.h"
 
+//template <typename T>
 class Tour {
 public:
 
     Tour();
+    Tour(Point a, Point b, Point c, Point d);
     ~Tour();
     void show();
     void draw(QGraphicsScene* scene);
@@ -24,6 +26,7 @@ public:
 
 private:
     Node* startNode;
+    void myForeach(void (*f)(Node));
 };
 
 #endif // TOUR_H
