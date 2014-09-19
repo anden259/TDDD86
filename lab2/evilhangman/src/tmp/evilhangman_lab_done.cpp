@@ -8,6 +8,7 @@
 using namespace std;
 
 const string alphabet  = "abcdefghijklmnopqrstuvwxyz";
+
 // fillmap files the map with nummber of letters and a vector with all words with that length
 template<typename T>
 void fillmap(map<int, T>& myMap){

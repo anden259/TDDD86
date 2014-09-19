@@ -29,32 +29,40 @@ void fill_grid(Grid <T>& grid, T filler)
     }
 }
 
+// Add 1 to the namber count, to all the cells around the living cell and not the cell it self
+void addMeAsNamber(int r,int c,Grid<int>& NumberOfNambers){
+    for(int i = -1; i <= 1; i++) {
+        for(int j = -1; j <= 1; j++) {
+            if(!((i == 0) && (j == 0)) && NumberOfNambers.inBounds(r + i,c + j)) {
+                NumberOfNambers.set(r + i,c + j,NumberOfNambers.get(r + i,c + j) + 1);
+            }
+        }
+    }
+}
+
+
+
 // Evolves the grid to the next generation.
 template  <typename T>
 void evolve(Grid <T>& grid)
 {
     int numRows  =  grid.numRows();
     int numCols  =  grid.numCols();
-    Grid < int> tmp_grid(numRows,numCols);
-    fill_grid(tmp_grid,0);
+    // a grid to count how many nambers that cell has.
+    Grid < int> NumberOfNambers(numRows,numCols);
+    fill_grid(NumberOfNambers,0);
 
     for(int r = 0; r < numRows; r++) {
         for(int c = 0; c < numCols; c++) {
             if(grid.get(r,c)  ==  'X') {
-                for(int i = -1; i <= 1; i++) {
-                    for(int j = -1; j <= 1; j++) {
-                        if(!((i == 0) && (j == 0)) && tmp_grid.inBounds(r + i,c + j)) {
-                            tmp_grid.set(r + i,c + j,tmp_grid.get(r + i,c + j) + 1);
-                        }
-                    }
-                }
+                addMeAsNamber(r,c,NumberOfNambers);
             }
         }
     }
 
     for(int r = 0; r < numRows; r++) {
         for(int c = 0; c < numCols; c++) {
-            switch (tmp_grid.get(r,c)) {
+            switch (NumberOfNambers.get(r,c)) {
             case 2:
                 break;
             case 3:

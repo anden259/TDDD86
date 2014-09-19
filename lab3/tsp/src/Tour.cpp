@@ -176,7 +176,7 @@ bool Tour::isCrossing(Node *n1, Node *n2)
      *
      * gives:
      *
-     * xi0 + xi1*s = xj0 + xj1*t
+     * xi0 + (xi1-xi0)*s = xj0 + xj1*t
      * yi0 + yi1*s = yj0 + yj1*t
      *
      * solve for s and t

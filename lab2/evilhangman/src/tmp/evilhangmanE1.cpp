@@ -1,3 +1,5 @@
+// anden259, ando037
+
 #include <iostream>
 #include <string>
 #include <string>
@@ -9,6 +11,7 @@
 using namespace std;
 
 const string alphabet  = "abcdefghijklmnopqrstuvwxyz";
+
 // fillmap files the map with nummber of letters and a vector with all words with that length
 template<typename T>
 void fillmap(map<int, T>& myMap){
@@ -24,6 +27,7 @@ void fillmap(map<int, T>& myMap){
     }
     myReader.close();
 }
+
 // get_family_string return the family string of that word
 // baste on the word start
 string get_family_string(string word, char c, string start){
@@ -50,6 +54,7 @@ map<string, T> getfamily(T& word_list, char c, string start){
     }
     return ret;
 }
+
 // returns a pair with family string as key and a vector as element
 // the pair returnd is the one with bigest vector
 //template<typename T>
@@ -66,6 +71,7 @@ pair<string, vector<string> > get_bigest_word_list(map<string, vector<string> >&
     }
     return ret_map_pair;
 }
+
 // returns the number of dashes in word
 int count_dash(string word){
     int ret(0);
@@ -102,6 +108,7 @@ int get_valid_length(T& myMap){
     }while(myMap.find(input) == myMap.end());
     return input;
 }
+
 //loop to get nummber of guesses
 int get_guesses(){
     int input;
@@ -113,6 +120,7 @@ int get_guesses(){
 
     return input;
 }
+
 // return true if the user wonts to see the word list
 bool show_list(){
     char input;
@@ -120,6 +128,7 @@ bool show_list(){
     cin >> input;
     return  input == 'y';
 }
+
 // print a word list
 template<typename T>
 void print_word_list(T& word_list){
@@ -129,6 +138,7 @@ void print_word_list(T& word_list){
     cout << endl;
     return;
 }
+
 // returns the new! letter enterd by the user
 char get_letter(string guesst){
     char ret;
@@ -175,6 +185,7 @@ void play_game(int len, int gue, bool show, vector<string> word_list){
     }
     return;
 }
+
 // the loop to restart the game after played
 template<typename T>
 void play_game_loop(T& myMap){
@@ -193,6 +204,7 @@ void play_game_loop(T& myMap){
     }while(input != 'q');
     return;
 }
+
 // main to start the program
 int main() {
     map<int, vector<string> > myMap;
