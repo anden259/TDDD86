@@ -23,10 +23,13 @@ public:
     double distance();
     void insertNearest(Point p);
     void insertSmallest(Point p);
+    void improve();
 
 private:
     Node* startNode;
     void myForeach(void (*f)(Node));
+    bool isCrossing(Node* n1, Node* n2);
+    void routeSwap(Node* n1, Node* n2);
 };
 
 #endif // TOUR_H
