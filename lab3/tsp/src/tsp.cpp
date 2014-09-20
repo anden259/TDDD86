@@ -18,7 +18,7 @@
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-    string filename = "circuit1290.txt";
+    string filename = "tsp1000.txt";
     ifstream input;
     input.open(filename);
 
@@ -37,21 +37,20 @@ int main(int argc, char *argv[]) {
     view->show();
 
     // run insertion heuristic
-    Tour tour(Point(100.0, 100.0), Point(500.0, 500.0), Point(500.0, 100.0), Point(100.0, 500.0));
+    //Tour tour(Point(100.0, 100.0), Point(500.0, 500.0), Point(500.0, 100.0), Point(100.0, 500.0));
     //Tour tour(Point(100.0, 100.0), Point(500.0, 100.0), Point(500.0, 500.0), Point(100.0, 500.0));
 
-    tour.improve();
     //tour1.show();
     //cout << "size : " << tour.size() << endl;
     //cout << "Tour distance: " << tour1.distance() << endl;
 
-    //Tour tour;
+    Tour tour;
     double x;
     double y;
     while (input >> x >> y) {
         Point p(x, y);
         //tour.insertNearest(p);
-        //tour.insertSmallest(p);
+        tour.insertSmallest(p);
         //uncomment the 4 lines below to animate
         //tour.draw(scene);
         //std::chrono::milliseconds dura(50);
@@ -60,11 +59,13 @@ int main(int argc, char *argv[]) {
     }
     input.close();
 
+    tour.improve();
+
     // print tour to standard output
     cout << "Tour distance: " << std::fixed << std::setprecision(4)
          << std::showpoint << tour.distance() << endl;
     cout << "Number of points: " << tour.size() << endl;
-    tour.show();
+    //tour.show();
 
     // draw tour
     tour.draw(scene);
