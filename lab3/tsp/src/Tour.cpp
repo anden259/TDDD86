@@ -254,7 +254,5 @@ void Tour::improve()
             ni = ni->next;
             nj = ni->next;
         }
-
     }while(foundCrossing);
-
 }

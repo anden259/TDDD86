@@ -37,13 +37,6 @@ int main(int argc, char *argv[]) {
     view->show();
 
     // run insertion heuristic
-    //Tour tour(Point(100.0, 100.0), Point(500.0, 500.0), Point(500.0, 100.0), Point(100.0, 500.0));
-    //Tour tour(Point(100.0, 100.0), Point(500.0, 100.0), Point(500.0, 500.0), Point(100.0, 500.0));
-
-    //tour1.show();
-    //cout << "size : " << tour.size() << endl;
-    //cout << "Tour distance: " << tour1.distance() << endl;
-
     Tour tour;
     double x;
     double y;
