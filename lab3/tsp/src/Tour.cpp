@@ -28,7 +28,21 @@ Tour::Tour(Point a, Point b, Point c, Point d):startNode(nullptr)
 
 Tour::~Tour()
 {
-    // TODO: write this member
+    Node* current = startNode;
+
+    if(current == nullptr)
+    {
+        return;
+    }
+
+    Node* next = current->next;
+    while(next != startNode)
+    {
+        next = current->next;
+        delete current;
+        current = next;
+    }
+    delete startNode;
 }
 
 void Tour::show()
@@ -152,7 +166,7 @@ bool Tour::isCrossing(Node *n1, Node *n2)
     Point pj0 = n2->point;
     Point pj1 = n2->next->point;
 
-    double a,b,c,d,e,f,g,h, s,t;
+    double a,b,c,d,e,f,g,h, s,t,div;
 
     a = pi0.x;
     b = pi0.y;
@@ -181,8 +195,9 @@ bool Tour::isCrossing(Node *n1, Node *n2)
      * s and t between 0 and 1 => crossing paths.
      */
 
-    s = (a*(f-h) + b*(g-e) + e*h - f*g) / ((a-c)*(f-h) + b*(g-e) + d*(e-g));
-    t = (a*(f-d) + b*(c-e) - c*f + d*e) / ((a-c)*(f-h) + b*(g-e) + d*(e-g));
+    div =((a-c)*(f-h) + b*(g-e) + d*(e-g));
+    s = (a*(f-h) + b*(g-e) + e*h - f*g) / div;
+    t = (a*(f-d) + b*(c-e) - c*f + d*e) / div;
 
     /*
     bool res = ((0 < s) && (s < 1) && (0 < t) && (t < 1));
