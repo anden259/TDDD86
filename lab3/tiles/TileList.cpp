@@ -1,9 +1,3 @@
-// This is the .cpp file you will edit and turn in.
-// We have provided a skeleton for you,
-// but you must finish it as described in the spec.
-// Also remove these comments here and add your own.
-// TODO: remove this comment header
-
 #include "TileList.h"
 
 TileList::TileList()
@@ -15,22 +9,20 @@ TileList::TileList()
 
 }
 
-TileList::TileList(const TileList &other)
-{
-    *this = other;
-}
-
 TileList::~TileList()
 {
-    // TODO: write this member
+    delete[] myTile;
 }
 
+// add a tile to the end of the list.
 void TileList::addTile(Tile tile)
 {
+    // if full, expand.
     if(size == allocSize){
         expand();
     }
 
+    // if empty, special case.
     if(last == nullptr){
         last = myTile;
     }else{
@@ -43,19 +35,19 @@ void TileList::addTile(Tile tile)
     return;
 }
 
-void TileList::drawAll(QGraphicsScene* scene)
+//
+void TileList::drawAll(QGraphicsScene* scene) const
 {
     for(Tile* current = myTile; current <= last; ++current){
         current->draw(scene);
     }
 }
 
-int TileList::indexOfTopTile(int x, int y)
+int TileList::indexOfTopTile(int x, int y) const
 {
     int index = -1;
     for(size_t i = 0; i < size; ++i){
         if(myTile[i].contains(x, y)){
-            //++index;
             index = i;
         }
     }
@@ -121,18 +113,21 @@ void TileList::expand(){
 }
 
 void TileList::removeByIndex(int index){
-    if(index < 0){
+    if((index < 0) || ((size_t) index >= size)){
         return;
     }
-    int prevIndex = index;
-    for(size_t currentIndex = index+1; currentIndex < size; ++currentIndex){
-        myTile[prevIndex] = myTile[currentIndex];
-        ++prevIndex;
+    if(size == 1){
+        size = 0;
+        last = nullptr;
+        return;
     }
-    --last;
-    --size;
-}
 
+    for(size_t currentIndex = index+1; currentIndex < size; ++currentIndex){
+        myTile[currentIndex-1] = myTile[currentIndex];
+    }
+    --size;
+    --last;
+}
 
 void TileList::addTileFirst(Tile tile){
     if(size == allocSize){
