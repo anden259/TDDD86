@@ -35,7 +35,7 @@ void TileList::addTile(Tile tile)
     return;
 }
 
-//
+// draw all tiles in the list to the scene
 void TileList::drawAll(QGraphicsScene* scene) const
 {
     for(Tile* current = myTile; current <= last; ++current){
@@ -43,6 +43,7 @@ void TileList::drawAll(QGraphicsScene* scene) const
     }
 }
 
+// get the index of the top most tile on coordinates x,y
 int TileList::indexOfTopTile(int x, int y) const
 {
     int index = -1;
@@ -54,6 +55,7 @@ int TileList::indexOfTopTile(int x, int y) const
     return index;
 }
 
+// raise the toptile on x,y to the top of the list (the end of the list)
 void TileList::raise(int x, int y)
 {
     int i = indexOfTopTile(x, y);
@@ -68,6 +70,7 @@ void TileList::raise(int x, int y)
     return;
 }
 
+// lower the top tile on x,y to the bottom (the start of the list)
 void TileList::lower(int x, int y)
 {
     int i = indexOfTopTile(x, y);
@@ -82,12 +85,14 @@ void TileList::lower(int x, int y)
     return;
 }
 
+// remove the toptile on x,y
 void TileList::remove(int x, int y)
 {
     removeByIndex(indexOfTopTile(x, y));
     return;
 }
 
+// remove all tiles on x,y
 void TileList::removeAll(int x, int y)
 {
     int i = indexOfTopTile(x, y);
@@ -97,6 +102,7 @@ void TileList::removeAll(int x, int y)
     }
 }
 
+// expand the array to make room for more tiles.
 void TileList::expand(){
     size_t newAllocSize = allocSize*2;
     Tile* newTile = new Tile[newAllocSize];
@@ -112,6 +118,7 @@ void TileList::expand(){
     return;
 }
 
+// remove specific tile by index.
 void TileList::removeByIndex(int index){
     if((index < 0) || ((size_t) index >= size)){
         return;
@@ -129,6 +136,7 @@ void TileList::removeByIndex(int index){
     --last;
 }
 
+// add a tile to the begining of the list.
 void TileList::addTileFirst(Tile tile){
     if(size == allocSize){
         expand();
