@@ -18,7 +18,7 @@
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-    string filename = "circuit1290.txt";
+    string filename = "usa13509.txt";
     ifstream input;
     input.open(filename);
 
@@ -55,10 +55,10 @@ int main(int argc, char *argv[]) {
     tour.improve();
 
     // print tour to standard output
-    cout << "Tour distance: " << std::fixed << std::setprecision(4)
-         << std::showpoint << tour.distance() << endl;
-    cout << "Number of points: " << tour.size() << endl;
-    tour.show();
+    //cout << "Tour distance: " << std::fixed << std::setprecision(4)
+    //     << std::showpoint << tour.distance() << endl;
+    //cout << "Number of points: " << tour.size() << endl;
+    //tour.show();
 
     // draw tour
     tour.draw(scene);
