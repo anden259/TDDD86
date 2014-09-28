@@ -23,12 +23,9 @@ public:
     double distance() const;
     void insertNearest(Point p);
     void insertSmallest(Point p);
-    void improve();
 
 private:
     Node* startNode;
-    bool isCrossing(const Node *n1, const Node *n2) const;
-    void routeSwap(Node* n1, Node* n2);
 };
 
 #endif // TOUR_H

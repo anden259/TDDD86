@@ -52,8 +52,6 @@ int main(int argc, char *argv[]) {
     }
     input.close();
 
-    tour.improve();
-
     // print tour to standard output
     cout << "Tour distance: " << std::fixed << std::setprecision(4)
          << std::showpoint << tour.distance() << endl;
