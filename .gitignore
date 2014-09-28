@@ -1,3 +1,4 @@
-life/Life.pro.user
-life/Life.pro.user.d9f3484
+*.user*
 *.user
+*MinGW_32bit-Debug*
+*MinGW_32bit-Release*
