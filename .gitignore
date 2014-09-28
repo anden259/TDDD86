@@ -2,3 +2,4 @@
 *.user
 *MinGW_32bit-Debug*
 *MinGW_32bit-Release*
+*.autosave

@@ -13,8 +13,7 @@
 Tour::Tour(): startNode(nullptr) {}
 
 // ctor for testing, creates a tour with four points.
-Tour::Tour(Point a, Point b, Point c, Point d)
-{
+Tour::Tour(Point a, Point b, Point c, Point d) {
     startNode = new Node(a, new Node(b, new Node(c, new Node(d, nullptr))));
     Node* node = startNode;
     while (node->next != nullptr) {
@@ -24,8 +23,7 @@ Tour::Tour(Point a, Point b, Point c, Point d)
 }
 
 // dtor
-Tour::~Tour()
-{
+Tour::~Tour() {
     if (startNode == nullptr) {
         return;
     } else if (startNode->next == startNode) {
@@ -43,8 +41,7 @@ Tour::~Tour()
 }
 
 // prints the a string representation of all points in the tour.
-void Tour::show() const
-{
+void Tour::show() const {
     if (startNode == nullptr) return;
 
     const Node* currentNode = startNode;
@@ -55,8 +52,7 @@ void Tour::show() const
 }
 
 // draw all lines between all nodes.
-void Tour::draw(QGraphicsScene *scene) const
-{
+void Tour::draw(QGraphicsScene *scene) const {
     if (startNode == nullptr) return;
 
     const Node* currentNode = startNode;
@@ -68,8 +64,7 @@ void Tour::draw(QGraphicsScene *scene) const
 
 // walks through all nodes to count them.
 // a private variable that is increased when adding a Node would be prefered over this.
-int Tour::size() const
-{
+int Tour::size() const {
     if (startNode == nullptr) return 0;
 
     const Node* currentNode = startNode;
@@ -84,8 +79,7 @@ int Tour::size() const
 }
 
 // walk by all nodes, summing the distance between them.
-double Tour::distance() const
-{
+double Tour::distance() const {
     if (startNode == nullptr) return 0;
 
     const Node* node = startNode;
@@ -100,8 +94,7 @@ double Tour::distance() const
 }
 
 // insert node after it's closesed node in the tour.
-void Tour::insertNearest(Point p)
-{
+void Tour::insertNearest(Point p) {
     if (startNode == nullptr) {
         startNode = new Node(p, nullptr);
         startNode->next = startNode;
@@ -126,8 +119,7 @@ void Tour::insertNearest(Point p)
 }
 
 // insert node where it gives the smallest increase in length
-void Tour::insertSmallest(Point p)
-{
+void Tour::insertSmallest(Point p) {
     if (startNode == nullptr) {
         startNode = new Node(p, nullptr);
         startNode->next = startNode;
@@ -153,8 +145,7 @@ void Tour::insertSmallest(Point p)
 }
 
 // Check if the lines between the points is crossing
-bool Tour::isCrossing(const Node *n1, const Node *n2) const
-{
+bool Tour::isCrossing(const Node *n1, const Node *n2) const {
     // This is only equation solving
     const Point pi0 = n1->point;
     const Point pi1 = n1->next->point;
@@ -198,8 +189,7 @@ bool Tour::isCrossing(const Node *n1, const Node *n2) const
 }
 
 // disolve crossings by swaping nodes and reverses the node direction between them.
-void Tour::routeSwap(Node *n1, Node *n2)
-{
+void Tour::routeSwap(Node *n1, Node *n2) {
     /*
      *      ->  n1   n2  <-   ...    <-
      *             X                   |
@@ -231,8 +221,7 @@ void Tour::routeSwap(Node *n1, Node *n2)
 }
 
 // Remove all crossings.
-void Tour::improve()
-{
+void Tour::improve() {
     bool foundCrossing = false;
     unsigned int size = this->size();
 
