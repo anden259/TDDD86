@@ -18,6 +18,7 @@
 #include "anden259_andno037.h"
 
 
+
 using namespace std;
 
 /*************************************************
@@ -50,7 +51,7 @@ void clearConsole();                                        // clear screen
  * Main
  ***************************************************************/
 int main() {
-	
+    ios_base::sync_with_stdio(false);
 	aplayer1  p1;				// create the first player
 	aplayer2  p2;				// creates the second player
 
@@ -62,14 +63,14 @@ int main() {
 	char press_enter;
 
 	// do some initial integrity checking of player classes
-    if (p1.getName().empty()) {	cout << "Player 1 did not set name properly. Forfeit." << endl;		exit(0);	}
-    if (p2.getName().empty()) {	cout << "Player 2 did not set name properly. Forfeit." << endl;		exit(0);	}
+    if (p1.getName().empty()) {	cout << "Player 1 did not set name properly. Forfeit." << "\n";		exit(0);	}
+    if (p2.getName().empty()) {	cout << "Player 2 did not set name properly. Forfeit." << "\n";		exit(0);	}
 	
 	// check for player class coloring handling
     p1.setPlayer(1);
-    if (p1.getPlayer()!=1) { cout << "Player " << p1.getName() << " player # failed - forfeit." << endl;		exit(0);	}
+    if (p1.getPlayer()!=1) { cout << "Player " << p1.getName() << " player # failed - forfeit." << "\n";		exit(0);	}
     p2.setPlayer(2);
-    if (p2.getPlayer()!=2) { cout << "Player " << p2.getName() << " player # failed - forfeit." << endl;		exit(0);	}
+    if (p2.getPlayer()!=2) { cout << "Player " << p2.getName() << " player # failed - forfeit." << "\n";		exit(0);	}
 	
 	// begin the main game loop
     for (gameNumber = 0; gameNumber < GAMES_PER_MATCH; gameNumber++) {
@@ -131,7 +132,7 @@ sensors activateSensors(int pl, Board &b, int tn) {
 	if (pl == 1) opp = 2;
 	else if (pl == 2) opp = 1;
 	else {
-		cout << "Error: attempting to actiavte sensors for a player other than 1 or 2." << endl;
+        cout << "Error: attempting to actiavte sensors for a player other than 1 or 2." << "\n";
 		exit(0);
 	}
 
@@ -389,13 +390,13 @@ void updateScore(int p, Board& g) {
 int findWinner(const aplayer1 &pl1, const aplayer2 &pl2, Board &g) {
 
     if (g.getScore(pl1.getPlayer()) >= SCORE_TO_WIN) {
-        cout << pl1.getName() << " is the winner." << endl;
+        cout << pl1.getName() << " is the winner." << "\n";
         g.incrementWins(pl1.getPlayer());
         return pl1.getPlayer();
 	}
 			
     else if (g.getScore(pl2.getPlayer()) >= SCORE_TO_WIN) {
-        cout << pl2.getName() << " is the winner." << endl;
+        cout << pl2.getName() << " is the winner." << "\n";
         g.incrementWins(pl2.getPlayer());
         return pl2.getPlayer();
 	}
@@ -412,8 +413,8 @@ void summaryStatistics(const aplayer1 &pl1, const aplayer2 &pl2, const Board &g)
     float p1wins = (float)g.getWins(1) / (float)GAMES_PER_MATCH * 100;	// player 1 win %
     float p2wins = (float)g.getWins(2) / (float)GAMES_PER_MATCH * 100;	// player 2 win %
 
-    cout << pl1.getName() << " won " << g.getWins(1) << " game(s) or " << p1wins << "%" << endl;
-    cout << pl2.getName() << " won " << g.getWins(2) << " game(s) or " << p2wins << "%" << endl;
+    cout << pl1.getName() << " won " << g.getWins(1) << " game(s) or " << p1wins << "%" << "\n";
+    cout << pl2.getName() << " won " << g.getWins(2) << " game(s) or " << p2wins << "%" << "\n";
 		
 }
 
@@ -422,33 +423,33 @@ void summaryStatistics(const aplayer1 &pl1, const aplayer2 &pl2, const Board &g)
  * display a startup message for each game
  */
 void startMessage(int gnum, const aplayer1 &pl1, const aplayer2 &pl2) {
-    cout << "Game " << gnum + 1 << " of " << GAMES_PER_MATCH << endl;
+    cout << "Game " << gnum + 1 << " of " << GAMES_PER_MATCH << "\n";
     if (pl1.getPlayer() == 1) {
-        cout << "Player " << pl1.getName() << " is Player 1 (base A)" << endl;
+        cout << "Player " << pl1.getName() << " is Player 1 (base A)" << "\n";
         if (pl2.getPlayer() == 2) {
-            cout << "Player " << pl2.getName() << " is Player 2 (base B)" << endl;
+            cout << "Player " << pl2.getName() << " is Player 2 (base B)" << "\n";
 		}
 		else {
-            cout << "error: Player " << pl2.getName() << " did not handle player number properly. Terminating." << endl;
+            cout << "error: Player " << pl2.getName() << " did not handle player number properly. Terminating." << "\n";
 		}
 	}
     else if (pl1.getPlayer() == 2) {
-        cout << "Player " << pl1.getName() << " is Player 2 (base B)" << endl;
+        cout << "Player " << pl1.getName() << " is Player 2 (base B)" << "\n";
         if (pl2.getPlayer() == 1) {
-            cout << "Player " << pl2.getName() << " is Player 1 (base A)" << endl;
+            cout << "Player " << pl2.getName() << " is Player 1 (base A)" << "\n";
 		}
 		else {
-            cout << "error: Player " << pl2.getName() << " did not handle player number properly. Terminating." << endl;
+            cout << "error: Player " << pl2.getName() << " did not handle player number properly. Terminating." << "\n";
 		}
 	}
-    else cout << "error: Player " << pl1.getName() << " did not handle player number properly. Terminating." << endl;
+    else cout << "error: Player " << pl1.getName() << " did not handle player number properly. Terminating." << "\n";
 	
-    if (gnum % 2) cout << "Player " << pl1.getName() << " goes first this game." << endl;
-    else cout << "Player " << pl2.getName() << " goes first this game." << endl;
+    if (gnum % 2) cout << "Player " << pl1.getName() << " goes first this game." << "\n";
+    else cout << "Player " << pl2.getName() << " goes first this game." << "\n";
 
-    cout << pl1.getName() << " says " << pl1.taunt(pl2.getName()) << endl;
-    cout << pl2.getName() << " says " << pl2.taunt(pl1.getName()) << endl;
-	cout << "Press enter to begin the game." << endl;
+    cout << pl1.getName() << " says " << pl1.taunt(pl2.getName()) << "\n";
+    cout << pl2.getName() << " says " << pl2.taunt(pl1.getName()) << "\n";
+    cout << "Press enter to begin the game." << "\n";
 }
 
 /*

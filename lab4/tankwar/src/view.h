@@ -9,7 +9,7 @@ namespace anden259_andno037_N {
 
 
 
-struct view_elements {
+struct viewElements {
     bool unknown{true};
     bool mine{false};
     bool op_path{false};
@@ -22,15 +22,21 @@ struct view_elements {
 
 class TView
 {
-    std::vector<std::vector<view_elements> > board;
+    std::vector<std::vector<viewElements> > board;
 public:
     TView();
     ~TView() = default;
-    void set_status(const location& loc, const status &s);
-    void set_status(int r, int c, const status &s);
-    void set_mine(int r,int c);
-    void display_view();
-    status get_status(const location& loc);
+    void setStatus(const location& loc, const status &s);
+    void setStatus(int r, int c, const status &s);
+    void setMine(int r,int c);
+    void setMine(const location& loc);
+    void displayView();
+    status getStatus(int r,int c);
+    status getStatus(const location& loc);
+
+    viewElements getView(const location& loc);
+    viewElements getView(int r,int c);
+
 
 };
 

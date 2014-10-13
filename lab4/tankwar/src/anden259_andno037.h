@@ -7,10 +7,14 @@
  *
  */
 
+#include <map>
+#include <vector>
+
 
 #include "Board.h"
 #include "Tank.h"
 #include "view.h"
+
 using namespace anden259_andno037_N;
 
 
@@ -39,8 +43,16 @@ private:
 
     void update_view(const sensors &s);
     void update_status(const sensors &s);
-
+    action goToLocation(const sensors &s, const location &to);
     action goToMyBase(const sensors &s);
+    action mineLocation(const sensors &s, location to);
+    list<location> mineMyBaseLocations(const sensors &s);
+    list<location> aStar(const sensors &s, const location& loc);
+    action goToLocationStupid(const sensors &s, const location& to);
+
+    bool isOkToMove(const location to);
+    bool isOkToMove(int r, int c);
+
     // any data that I want to retain for my tank - probably want to store some tank state information
     TView board;
 

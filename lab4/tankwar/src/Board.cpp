@@ -233,7 +233,7 @@ void Board::displayBoard(const string &name_p1, const string &name_p2, const act
     case start: cout << "start "; break;
     default: cout <<"move ";
     }
-    cout << score_p2 << endl;
+    cout << score_p2 << "\n";
 
     for (int row = 0; row < BOARD_ROWS; row++) {
         for (int col = 0; col < BOARD_COLS; col++) {

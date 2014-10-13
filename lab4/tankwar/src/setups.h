@@ -15,7 +15,7 @@ const int MAX_TURNS = 5000;         // the maximum number of turns before highes
 
 const int GAMES_PER_MATCH = 1;      // the number of games in each match
 //const int SCORE_TO_WIN = 1000;      // the number of points you must get in order to win
-const int SCORE_TO_WIN = 10;      // the number of points you must get in order to win
+const int SCORE_TO_WIN = 200;      // the number of points you must get in order to win
 
 const int BOARD_ROWS = 52;          // size of the map
 const int BOARD_COLS = 72;          // size of the map
