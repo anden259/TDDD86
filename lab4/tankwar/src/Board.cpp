@@ -272,7 +272,7 @@ void Board::displayBoard(const string &name_p1, const string &name_p2, const act
                 }
             }
         }
-        cout << endl;
+        cout << "\n";
     }
     cout << endl;
 }

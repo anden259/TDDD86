@@ -11,6 +11,10 @@
 #include "Board.h"
 #include "Tank.h"
 #include "view.h"
+using namespace anden259_andno037_N;
+
+
+
 
 class anden259_andno037 : public Tank
 {
@@ -36,6 +40,7 @@ private:
     void update_view(const sensors &s);
     void update_status(const sensors &s);
 
+    action goToMyBase(const sensors &s);
     // any data that I want to retain for my tank - probably want to store some tank state information
     TView board;
 
