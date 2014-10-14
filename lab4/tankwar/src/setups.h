@@ -13,7 +13,7 @@ const int TIMER_AMT = 200;          // time to wait between each move if TIMER_G
 const int MAX_TURNS = 5000;         // the maximum number of turns before highest scoring player wins
                                     // to prevent deadlocks
 
-const int GAMES_PER_MATCH = 1;      // the number of games in each match
+const int GAMES_PER_MATCH = 5;      // the number of games in each match
 //const int SCORE_TO_WIN = 1000;      // the number of points you must get in order to win
 const int SCORE_TO_WIN = 200;      // the number of points you must get in order to win
 
@@ -38,11 +38,11 @@ const int POWERUP_POINTS = 150;		// number of points you get for touching the "p
 const int POWERUP_AMMO = 15;		// amount of additional ammo you get for the "b" power-up
 const int POWERUP_MINES = 5;		// number of additional mines you get for the "m" power-up
 
-const int MINES_PER_PLAYER = 5;		// number of mines each player starts with
+const int MINES_PER_PLAYER = 2;		// number of mines each player starts with
 const int START_AMMO = 30;			// number of tank bullets each player starts with
 
-const int MAX_OBS_SIZE = 6;			// maximum size of each obstacle cluster
-const int NUM_OBS_CLUSTERS = 6;		// number of obstacle clusters on the map
+const int MAX_OBS_SIZE = 12;			// maximum size of each obstacle cluster
+const int NUM_OBS_CLUSTERS = 25;		// number of obstacle clusters on the map
 
 /**************************************************************
  * DO NOT MODIFY BELOW THIS LINE OR THE GAME WILL NOT FUNCTION

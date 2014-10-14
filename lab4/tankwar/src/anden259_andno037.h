@@ -9,6 +9,7 @@
 
 #include <map>
 #include <vector>
+#include <set>
 
 
 #include "Board.h"
@@ -17,7 +18,10 @@
 
 using namespace anden259_andno037_N;
 
-
+struct classCompLocation {
+  bool operator() (const location& lhs, const location& rhs) const
+  {return pair<int,int>(lhs.r,lhs.c) < pair<int,int>(rhs.r,rhs.c);}
+};
 
 
 class anden259_andno037 : public Tank
@@ -49,9 +53,10 @@ private:
     list<location> mineMyBaseLocations(const sensors &s);
     list<location> aStar(const sensors &s, const location& loc);
     action goToLocationStupid(const sensors &s, const location& to);
+    list<location> reconstructPath(map<location, location, classCompLocation> &cameFrom, const location& current);
 
-    bool isOkToMove(const location to);
-    bool isOkToMove(int r, int c);
+    bool isOkToMove(const location &to);
+    bool isOkToMove(const int r, const int c);
 
     // any data that I want to retain for my tank - probably want to store some tank state information
     TView board;

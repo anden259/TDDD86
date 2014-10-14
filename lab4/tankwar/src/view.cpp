@@ -14,6 +14,10 @@ TView::TView()
         board[r].reserve(BOARD_COLS);
         for (int c = 0; c < BOARD_COLS; ++c) {
             board[r].push_back(viewElements {});
+            if((r == 0) || (c == 0) || (r == (BOARD_ROWS - 1)) || (c == (BOARD_COLS - 1))){
+                board[r][c].unknown = false;
+                board[r][c].stat = edge;
+            }
         }
     }
 

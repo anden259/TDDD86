@@ -38,18 +38,17 @@ void anden259_andno037::update_status(const sensors &s)
 
 }
 
-
-
 action anden259_andno037::doYourThing(const sensors &s)
 {
     update_status(s);
-    //board.display_view();
-    if (mineMyBaseLocations(s).size() > 0) {
+
+    if ((s.myMines != 0) && (mineMyBaseLocations(s).size() > 0)) {
         return mineLocation(s, mineMyBaseLocations(s).front());
     } else {
-        return goToOppBase(s);
+        return goToLocation(s, s.oppBase);
+        //return goToOppBase(s);
     }
-
+    //return goToMyBase(s);
 
     // right now calls base class fireAtOpp method -
     // feel free to override that method
@@ -80,13 +79,14 @@ list<location> anden259_andno037::mineMyBaseLocations(const sensors &s)
     return mineLocations;
 }
 
-bool anden259_andno037::isOkToMove(const location to)
+bool anden259_andno037::isOkToMove(const location &to)
 {
     return isOkToMove(to.r, to.c);
 }
-bool anden259_andno037::isOkToMove(int r, int c)
+
+bool anden259_andno037::isOkToMove(const int r, const int c)
 {
-    viewElements loc = board.getView(r, c);
+    const viewElements loc = board.getView(r, c);
 
     if (loc.unknown) return true;
     if (loc.mine) return false;
@@ -104,6 +104,7 @@ bool anden259_andno037::isOkToMove(int r, int c)
         return true;
         break;
     }
+
     return true;
 
 }
@@ -122,7 +123,8 @@ action anden259_andno037::mineLocation(const sensors &s, location to)
         board.setMine(s.me);
         return doMine;
     } else {
-        return goToLocationStupid(s, to);
+        //return goToLocationStupid(s, to);
+        return goToLocation(s, to);
     }
 
 }
@@ -149,20 +151,99 @@ action anden259_andno037::goToLocationStupid(const sensors &s, const location& t
     }
     return move;
 }
+list<location> anden259_andno037::reconstructPath(map<location, location, classCompLocation> &cameFrom, const location &current) {
+    bool is=false;
+    list<location> locationList;
+//    for (auto llit : cameFrom){
+//        if(llit.first == current){
+//            //cout <<"tjena !!!\n";
+//            is=true;
+//            break;
+//        }
+//    }
+    if(cameFrom.find(current)!=cameFrom.end()){
+        is=true;
+    }
+    if(is){
+        locationList = reconstructPath(cameFrom, cameFrom[current]);
+
+    }
+
+    locationList.push_back(current);
+    return locationList;
+}
+
+
 
 list<location> anden259_andno037::aStar(const sensors &s, const location& to)
 {
-    vector<location> closedset;
-    vector<location> openset{s.me};
-    map <location,location> cameFrom;
+    set<location, classCompLocation> closedset;
+    set<location, classCompLocation> openset {s.me};
+    // <location,location> cameFrom;
+    map< location, location, classCompLocation> cameFrom;
 
+    map< location, int, classCompLocation> gScore {pair<location, int>(s.me, 0)};
+    map< location, int, classCompLocation> fScore {pair<location, int>(s.me , gScore[s.me] + Board::getLine(s.me, to).size())};
+
+    while (!openset.empty()) {
+        location current = *(openset.begin());
+        for (auto loc : openset) {
+            if (gScore[loc] < gScore[current]) {
+                current = loc;
+            }
+        }
+
+        if (current == to) {
+
+            return reconstructPath(cameFrom, to);
+        }
+
+        openset.erase(current);
+        closedset.insert(current);
+        location neighbor;
+        for (int r = -1; r <= 1 ; ++r) {
+            for (int c = -1; c <= 1; ++c) {
+                neighbor.r = current.r + r;
+                neighbor.c = current.c + c;
+                if (!(r == 0 && c == 0) && isOkToMove(neighbor)) {
+
+                    if (closedset.find(neighbor) != closedset.end()) {
+                        continue;
+                    }
+                    int tempGscore = gScore[current] + 1;
+
+                    if ((openset.find(neighbor) == openset.end()) || (tempGscore < gScore[neighbor])) {
+                        if(s.me != current)
+                            cameFrom[neighbor] = current;
+                        gScore[neighbor] = tempGscore;
+                        fScore[neighbor] = gScore[neighbor] + Board::getLine(neighbor, to).size();
+                        if (openset.find(neighbor) == openset.end()) {
+                            openset.insert(neighbor);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    cout << "no path\n";
+    return list<location> {};
 
 }
 
 action anden259_andno037::goToLocation(const sensors &s, const location& to)
 {
     action move;
-    list<location> myPath = aStar(s,to);
+    list<location> myPath = aStar(s, to);
+    //myPath.reverse();
+
+    //myPath.pop_front();
+
+
+    //cout <<"me "<< s.me.r << "  " << s.me.c <<"\n";
+
+//    for (auto x:myPath){
+//    cout << x.r << "  " << x.c <<"\n";
+//    }
 
 
 
