@@ -10,7 +10,7 @@
 #include <map>
 #include <vector>
 #include <set>
-
+#include <random>
 
 #include "Board.h"
 #include "Tank.h"
@@ -54,13 +54,28 @@ private:
     list<location> aStar(const sensors &s, const location& loc);
     action goToLocationStupid(const sensors &s, const location& to);
     list<location> reconstructPath(map<location, location, classCompLocation> &cameFrom, const location& current);
+    list<location> okNeighbors(const location& loc,const sensors& s);
+    static int calcDistance(const location& from, const location& to);
+    action randomStep(const sensors &s);
+    action pillageAndDodge(const sensors &s);
 
-    bool isOkToMove(const location &to);
-    bool isOkToMove(const int r, const int c);
+    // TODO: fundera på om vi vill ha en path lagrad i klassen som vi kan följa istället för att köra A* varje gång. anropa bara A* om vi inte kan gå.
+
+    bool isOkToMove(const location &to,const sensors& s);
+    bool isOkToMove(const int r, const int c,const sensors& s);
+    bool isMoveable(const int r,const int c,const sensors& s);
+    bool isMoveable(const location &loc,const sensors& s);
+
+
+    int cost(const int r,const int c);
+    int cost(const location &loc);
+
+
 
     // any data that I want to retain for my tank - probably want to store some tank state information
     TView board;
-
+    size_t matchNumber{0};
+    map<size_t ,map<size_t ,const sensors> > historyMap;
 
 
 };

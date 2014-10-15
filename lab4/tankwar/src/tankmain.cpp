@@ -11,7 +11,9 @@
 #include <cstdlib>			// for exit()  
 #include <iostream>
 #include <time.h>
- 
+
+//#pragma gcc optimize ( o0 )
+
 #include "setups.h"
 #include "player.h"			// for human players
 #include "garlick.h"
@@ -50,6 +52,7 @@ void clearConsole();                                        // clear screen
 /***************************************************************
  * Main
  ***************************************************************/
+//int main() __attribute__((optimize("-O0")));
 int main() {
     ios_base::sync_with_stdio(false);
 	aplayer1  p1;				// create the first player
@@ -86,30 +89,37 @@ int main() {
 		
         while ( (gameStatus == 0) && (turnNum < MAX_TURNS) ) {	// no winner yet
             turnNum++;
+            //game.displayBoard(p1.getName(), p2.getName(), move_hold1, move_hold2);
             if (gameNumber % 2) {
+                clearConsole();
+                cout << "\n";
                 move_hold1 = p1.doYourThing(activateSensors(1, game, turnNum));
                 processMove(move_hold1, 1, game);
                 updateScore(1, game);
 			}
 			else {
+                game.displayBoard(p1.getName(), p2.getName(), move_hold1, move_hold2);
                 move_hold2 = p2.doYourThing(activateSensors(2, game, turnNum));
                 processMove(move_hold2, 2, game);
                 updateScore(2, game);
 			}
-            game.displayBoard(p1.getName(), p2.getName(), move_hold1, move_hold2);
+            //game.displayBoard(p1.getName(), p2.getName(), move_hold1, move_hold2);
 			proceed();			// either asks user to press enter, or waits for timer
             if ( (turnNum < MAX_TURNS) && ((gameStatus = findWinner(p1, p2, game)) == 0) ) { // if no winner, proceed with next player
                 if (gameNumber % 2) {
+                    game.displayBoard(p1.getName(), p2.getName(), move_hold1, move_hold2);
                     move_hold2 = p2.doYourThing(activateSensors(2, game, turnNum));
                     processMove(move_hold2, 2, game);
                     updateScore(2, game);
 				}
-				else {
+                else {
+                    clearConsole();
+                    cout << "\n";
                     move_hold1 = p1.doYourThing(activateSensors(1, game, turnNum));
                     processMove(move_hold1, 1, game);
                     updateScore(1, game);
 				}
-                game.displayBoard(p1.getName(), p2.getName(), move_hold1, move_hold2);
+                //game.displayBoard(p1.getName(), p2.getName(), move_hold1, move_hold2);
                 gameStatus = findWinner(p1, p2, game);
 			}
 			proceed();			// either asks user to press enter, or waits for timer

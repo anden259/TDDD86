@@ -24,13 +24,24 @@ class TView
 {
     std::vector<std::vector<viewElements> > board;
 public:
-    TView();
+    TView() = default;
     ~TView() = default;
     void setStatus(const location& loc, const status &s);
     void setStatus(int r, int c, const status &s);
     void setMine(int r,int c);
     void setMine(const location& loc);
+
+    void setPotentialMine(int r,int c);
+    void setPotentialMine(const location& loc);
+
+    void setOppPath(int r,int c);
+    void setOppPath(const location& loc);
+
+
     void displayView();
+    void displayView(const sensors& s);
+    void clear();
+    void initView();
     status getStatus(int r,int c);
     status getStatus(const location& loc);
 

@@ -15,7 +15,7 @@ const int MAX_TURNS = 5000;         // the maximum number of turns before highes
 
 const int GAMES_PER_MATCH = 5;      // the number of games in each match
 //const int SCORE_TO_WIN = 1000;      // the number of points you must get in order to win
-const int SCORE_TO_WIN = 200;      // the number of points you must get in order to win
+const int SCORE_TO_WIN = 250;      // the number of points you must get in order to win
 
 const int BOARD_ROWS = 52;          // size of the map
 const int BOARD_COLS = 72;          // size of the map
@@ -38,8 +38,8 @@ const int POWERUP_POINTS = 150;		// number of points you get for touching the "p
 const int POWERUP_AMMO = 15;		// amount of additional ammo you get for the "b" power-up
 const int POWERUP_MINES = 5;		// number of additional mines you get for the "m" power-up
 
-const int MINES_PER_PLAYER = 2;		// number of mines each player starts with
-const int START_AMMO = 30;			// number of tank bullets each player starts with
+const int MINES_PER_PLAYER = 5;		// number of mines each player starts with
+const int START_AMMO = 0;			// number of tank bullets each player starts with
 
 const int MAX_OBS_SIZE = 12;			// maximum size of each obstacle cluster
 const int NUM_OBS_CLUSTERS = 25;		// number of obstacle clusters on the map
