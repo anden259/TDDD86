@@ -38,7 +38,7 @@ public:
     void setOppPath(const location& loc);
 
 
-    void displayView();
+
     void displayView(const sensors& s);
     void clear();
     void initView();

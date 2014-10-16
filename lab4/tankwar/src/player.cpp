@@ -9,7 +9,19 @@ player::player() {
 }
 
 action player::doYourThing (const sensors &s) {
-    return fireAtOpp(s);  // right now calls base class fireAtOpp method -
+    action move;
+
+
+    if(s.turn%2==0){
+        move.theMove=mine;
+    }else{
+        move.theMove=moveS;
+    }
+
+    return move;
+
+
+    //return fireAtOpp(s);  // right now calls base class fireAtOpp method -
                             // feel free to override that method
                             // with one that fires at where you think they will be
 }

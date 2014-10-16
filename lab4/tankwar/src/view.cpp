@@ -5,7 +5,8 @@ namespace anden259_andno037_N
 
 
 
-void TView::initView(){
+void TView::initView()
+{
 
     board.reserve(BOARD_ROWS);
     board.clear();
@@ -17,7 +18,7 @@ void TView::initView(){
             if ((r == 0) || (c == 0) || (r == (BOARD_ROWS - 1)) || (c == (BOARD_COLS - 1))) {
                 board[r][c].unknown = false;
                 board[r][c].stat = edge;
-            }else{
+            } else {
                 board[r][c].stat = nada;
             }
         }
@@ -66,16 +67,18 @@ void TView::setPotentialMine(const location& loc)
 
 void TView::setPotentialMine(int r, int c)
 {
+    board[r][c].unknown = false;
     board[r][c].pot_mine = true;
 }
 
 void TView::setOppPath(const location& loc)
 {
-    setOppPath(loc.r,loc.c);
+    setOppPath(loc.r, loc.c);
 }
 
 void TView::setOppPath(int r, int c)
 {
+    board[r][c].unknown = false;
     board[r][c].op_path = true;
 }
 
@@ -92,63 +95,19 @@ viewElements TView::getView(int r, int c)
     return board[r][c];
 }
 
-void TView::displayView(const sensors &s){
-    for (int row = 0; row < BOARD_ROWS; row++) {
-        for (int col = 0; col < BOARD_COLS; col++) {
-
-            if (board[row][col].unknown) {
-                cout << '.';
-            } else if (board[row][col].mine) {
-                cout << '^';
-            }else if(board[row][col].pot_mine){
-                cout << 'v';
-            }else if(board[row][col].op_path){
-                cout << 'X';
-            }
-            else {
-
-                switch (board[row][col].stat) {
-                case  edge     : {
-                    std::cout << "=";
-                } break;
-                case  obs      : {
-                    std::cout << "*";
-                } break;
-                case  nada     : {
-                    std::cout << " ";
-                } break;
-                case pu_ammo   : {
-                    std::cout << "b";
-                } break;
-                case pu_mines  : {
-                    std::cout << "m";
-                } break;
-                case pu_points : {
-                    std::cout << "p";
-                } break;
-                default: std::cout << "ERROR displaying board - an unknown status was stored in square " << row << "," << col;
-
-                }
-            }
-        }
-        std::cout << "\n";
-    }
-    std::cout << endl;
-}
-
-void TView::displayView()
+void TView::displayView(const sensors &s)
 {
     for (int row = 0; row < BOARD_ROWS; row++) {
         for (int col = 0; col < BOARD_COLS; col++) {
 
-            if (board[row][col].unknown) {
-                cout << '.';
-            } else if (board[row][col].mine) {
+            if (board[row][col].mine) {
                 cout << '^';
             } else if (board[row][col].pot_mine) {
                 cout << 'v';
             } else if (board[row][col].op_path) {
-                cout << 'v';
+                cout << 'X';
+            } else if (board[row][col].unknown) {
+                cout << '.';
             } else {
 
                 switch (board[row][col].stat) {
@@ -178,11 +137,13 @@ void TView::displayView()
         std::cout << "\n";
     }
     std::cout << endl;
-
 }
 
 
-void TView::clear(){
+
+
+void TView::clear()
+{
     initView();
 
 }

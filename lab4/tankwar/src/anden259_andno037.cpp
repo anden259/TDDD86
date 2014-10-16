@@ -12,11 +12,17 @@ anden259_andno037::anden259_andno037():
     this->name = "anden259_andno037";
 }
 
-
+// update the view of the bord
+// and save the info of this round for later use
 void anden259_andno037::update_status(const sensors &s)
 {
 
     historyMap[matchNumber].insert(pair<size_t, const sensors>(s.turn, s));
+    board.setOppPath(s.opp);
+// to see if the oppnent is siting
+    if (s.turn != 1 && historyMap[matchNumber][s.turn - 1].opp == s.opp) {
+        board.setPotentialMine(s.opp);
+    }
 
     board.setStatus(s.me.r - 1, s.me.c - 1, s.look[0]);
     board.setStatus(s.me.r - 1, s.me.c, s.look[1]);
@@ -33,7 +39,7 @@ void anden259_andno037::update_status(const sensors &s)
 
 
 }
-
+// things the tank can do
 action anden259_andno037::doYourThing(const sensors &s)
 {
     if (s.turn == 1) {
@@ -44,7 +50,7 @@ action anden259_andno037::doYourThing(const sensors &s)
 
     // TODO: pot_mine, opp_path
     update_status(s);
-    board.displayView();
+    board.displayView(s);
     if ((s.myMines != 0) && (mineMyBaseLocations(s).size() > 0)) {
         return mineLocation(s, mineMyBaseLocations(s).front());
     } else {
@@ -59,7 +65,7 @@ string anden259_andno037::taunt(const string &otherguy) const
     return "TJENA!! " + otherguy;
 }
 
-
+// return a list of all the neighbors a round the base you can put a mine
 list<location> anden259_andno037::mineMyBaseLocations(const sensors &s)
 {
 
@@ -68,7 +74,7 @@ list<location> anden259_andno037::mineMyBaseLocations(const sensors &s)
 }
 
 
-
+// return a list of all the neighbor a round loc you can move to
 list<location> anden259_andno037::okNeighbors(const location& loc, const sensors& s)
 {
     list<location> locations;
@@ -86,6 +92,7 @@ list<location> anden259_andno037::okNeighbors(const location& loc, const sensors
     return locations;
 }
 
+// is the location moveable at all
 bool anden259_andno037::isMoveable(const int r, const int c, const sensors &s)
 {
     if (s.opp.r == r && s.opp.c == c) return false;
@@ -104,18 +111,19 @@ int anden259_andno037::cost(const location &loc)
     return cost(loc.r, loc.c);
 }
 
+// wat is the cost to walk on this location
 int anden259_andno037::cost(const int r, const int c)
 {
 
     const viewElements loc = board.getView(r, c);
 
 
-    if (loc.unknown) {
-        return 1;
+    if (loc.pot_mine) {
+        return 5000;
     } else if (loc.mine) {
         return 5000;
-    } else if (loc.pot_mine) {
-        return 5000;
+    } else if (loc.unknown) {
+        return 1;
     } else {
 
         switch (loc.stat) {
@@ -153,19 +161,19 @@ bool anden259_andno037::isOkToMove(const location &to, const sensors &s)
     return isOkToMove(to.r, to.c, s);
 }
 
+// is it ok to move to this location
 bool anden259_andno037::isOkToMove(const int r, const int c, const sensors &s)
 {
     const viewElements loc = board.getView(r, c);
-    if (s.opp.r == r && s.opp.c == c) return false;
-    if (loc.unknown) return true;
-    if (loc.mine) return false;
 
+    if (!isMoveable(r,c ,s)){
+        return false;
+    }
+    if (loc.mine) return false;
     if (loc.pot_mine)return false;//TODO !!!
+    if (loc.unknown) return true;
 
     switch (loc.stat) {
-    case edge:
-        return false;
-        break;
     case obs:
         return false;
         break;
@@ -179,12 +187,9 @@ bool anden259_andno037::isOkToMove(const int r, const int c, const sensors &s)
 }
 
 
-
+// mine this location if not there go to the location.
 action anden259_andno037::mineLocation(const sensors &s, location to)
 {
-    //list<location> myPath;
-    //myPath = Board::getLine(s.me, to);
-
     // TODO check if mined
     if (s.me == to) {
         action doMine;
@@ -197,7 +202,7 @@ action anden259_andno037::mineLocation(const sensors &s, location to)
     }
 
 }
-
+// go to a location in a line
 action anden259_andno037::goToLocationStupid(const sensors &s, const location& to)
 {
     action move;
@@ -220,17 +225,12 @@ action anden259_andno037::goToLocationStupid(const sensors &s, const location& t
     }
     return move;
 }
+
+// creating a list of the locations to your goal.
 list<location> anden259_andno037::reconstructPath(map<location, location, classCompLocation> &cameFrom, const location &current)
 {
     bool is = false;
     list<location> locationList;
-//    for (auto llit : cameFrom){
-//        if(llit.first == current){
-//            //cout <<"tjena !!!\n";
-//            is=true;
-//            break;
-//        }
-//    }
     if (cameFrom.find(current) != cameFrom.end()) {
         is = true;
     }
@@ -243,12 +243,15 @@ list<location> anden259_andno037::reconstructPath(map<location, location, classC
     return locationList;
 }
 
+
 int anden259_andno037::calcDistance(const location& from, const location& to)
 {
     return max((from.r - to.r) * (from.r - to.r), (from.c - to.c) * (from.c - to.c));
     //return (from.r - to.r)*(from.r - to.r) + (from.c - to.c)*(from.c - to.c);
 }
 
+
+// astar implementation to find you way.
 list<location> anden259_andno037::aStar(const sensors &s, const location& to)
 {
     set<location, classCompLocation> closedset;
@@ -306,24 +309,12 @@ list<location> anden259_andno037::aStar(const sensors &s, const location& to)
 
 
 
-
+// move with a star.
 action anden259_andno037::goToLocation(const sensors &s, const location& to)
 {
     action move;
     // TODO: kan fastna och returnerna move från föregående drag.
     list<location> myPath = aStar(s, to);
-    //myPath.reverse();
-
-    //myPath.pop_front();
-
-
-    //cout <<"me "<< s.me.r << "  " << s.me.c <<"\n";
-
-//    for (auto x:myPath){
-//    cout << x.r << "  " << x.c <<"\n";
-//    }
-
-
 
     list<location>::iterator i;
 
@@ -343,7 +334,7 @@ action anden259_andno037::goToLocation(const sensors &s, const location& to)
     return move;
 }
 
-
+// move to opponent base in random step
 action anden259_andno037::pillageAndDodge(const sensors &s)
 {
     int ran = (rand() % 100) + 1;
@@ -356,6 +347,8 @@ action anden259_andno037::pillageAndDodge(const sensors &s)
 
 
 }
+
+// move a random step
 action anden259_andno037::randomStep(const sensors &s)
 {
     list<location> neighborList = okNeighbors(s.me, s);
