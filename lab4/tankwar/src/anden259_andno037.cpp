@@ -339,7 +339,7 @@ action anden259_andno037::pillageAndDodge(const sensors &s)
 {
     int ran = (rand() % 100) + 1;
 
-    if (ran > 35) {
+    if (calcDistance(s.me,s.myBase)<10 || ran > 35) {
         return goToLocation(s, s.oppBase);
     } else {
         return randomStep(s);
@@ -352,7 +352,7 @@ action anden259_andno037::pillageAndDodge(const sensors &s)
 action anden259_andno037::randomStep(const sensors &s)
 {
     list<location> neighborList = okNeighbors(s.me, s);
-    if (neighborList.empty()) {
+    if (neighborList.empty()) {        
         return goToLocation(s, s.me);
     }
     int ran = rand() % neighborList.size();
