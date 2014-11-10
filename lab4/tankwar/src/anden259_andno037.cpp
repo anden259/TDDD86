@@ -4,8 +4,149 @@
  *
  */
 #include "anden259_andno037.h"
-#include "view.h"
 
+
+namespace anden259_andno037_N
+{
+
+void TView::initView()
+{
+    board.reserve(BOARD_ROWS);
+    board.clear();
+    for (int r = 0; r < BOARD_ROWS; ++r) {
+        board.push_back(std::vector<viewElements> {});
+        board[r].reserve(BOARD_COLS);
+        for (int c = 0; c < BOARD_COLS; ++c) {
+            board[r].push_back(viewElements {});
+            if ((r == 0) || (c == 0) || (r == (BOARD_ROWS - 1)) || (c == (BOARD_COLS - 1))) {
+                board[r][c].unknown = false;
+                board[r][c].stat = edge;
+            } else {
+                board[r][c].stat = nada;
+            }
+        }
+    }
+}
+
+
+void TView::setStatus(const location& loc, const status& s)
+{
+    setStatus(loc.r, loc.c, s);
+}
+
+void TView::setStatus(int r, int c, const status& s)
+{
+    board[r][c].stat = s;
+    board[r][c].unknown = false;
+}
+
+status TView::getStatus(const location& loc)
+{
+    return getStatus(loc.r, loc.c);
+}
+
+status TView::getStatus(int r, int c)
+{
+    return board[r][c].stat;
+}
+
+void TView::setMine(const location& loc)
+{
+    setMine(loc.r, loc.c);
+}
+
+void TView::setMine(int r, int c)
+{
+    board[r][c].mine = true;
+}
+void TView::setPotentialMine(const location& loc)
+{
+    setPotentialMine(loc.r, loc.c);
+}
+
+void TView::setPotentialMine(int r, int c)
+{
+    board[r][c].unknown = false;
+    board[r][c].pot_mine = true;
+}
+
+void TView::setOppPath(const location& loc)
+{
+    setOppPath(loc.r, loc.c);
+}
+
+void TView::setOppPath(int r, int c)
+{
+    board[r][c].unknown = false;
+    board[r][c].op_path = true;
+}
+
+viewElements TView::getView(const location& loc)
+{
+    return getView(loc.r, loc.c);
+}
+
+viewElements TView::getView(int r, int c)
+{
+    return board[r][c];
+}
+
+void TView::displayView(const sensors)
+{
+    for (int row = 0; row < BOARD_ROWS; row++) {
+        for (int col = 0; col < BOARD_COLS; col++) {
+
+            if (board[row][col].mine) {
+                cout << '^';
+            } else if (board[row][col].pot_mine) {
+                cout << 'v';
+            } else if (board[row][col].op_path) {
+                cout << 'X';
+            } else if (board[row][col].unknown) {
+                cout << '.';
+            } else {
+
+                switch (board[row][col].stat) {
+                case  edge     : {
+                    std::cout << "=";
+                } break;
+                case  obs      : {
+                    std::cout << "*";
+                } break;
+                case  nada     : {
+                    std::cout << " ";
+                } break;
+                case pu_ammo   : {
+                    std::cout << "b";
+                } break;
+                case pu_mines  : {
+                    std::cout << "m";
+                } break;
+                case pu_points : {
+                    std::cout << "p";
+                } break;
+                default: std::cout << "ERROR displaying board - an unknown status was stored in square " << row << "," << col;
+
+                }
+            }
+        }
+        std::cout << "\n";
+    }
+    std::cout << endl;
+}
+
+
+
+
+void TView::clear()
+{
+    initView();
+}
+
+
+}
+
+// ---------------------------------------------------------------------------- //
 
 anden259_andno037::anden259_andno037():
     Tank {} {
@@ -28,7 +169,6 @@ void anden259_andno037::update_status(const sensors &s)
     board.setStatus(s.me.r - 1, s.me.c, s.look[1]);
     board.setStatus(s.me.r - 1, s.me.c + 1, s.look[2]);
 
-
     board.setStatus(s.me.r, s.me.c - 1, s.look[3]);
     board.setStatus(s.me.r, s.me.c, s.look[4]);
     board.setStatus(s.me.r, s.me.c + 1, s.look[5]);
@@ -50,14 +190,13 @@ action anden259_andno037::doYourThing(const sensors &s)
 
     // TODO: pot_mine, opp_path
     update_status(s);
-    board.displayView(s);
+    //board.displayView(s);
     if ((s.myMines != 0) && (mineMyBaseLocations(s).size() > 0)) {
         return mineLocation(s, mineMyBaseLocations(s).front());
     } else {
 
         return pillageAndDodge(s);
     }
-
 }
 
 string anden259_andno037::taunt(const string &otherguy) const
@@ -68,8 +207,6 @@ string anden259_andno037::taunt(const string &otherguy) const
 // return a list of all the neighbors a round the base you can put a mine
 list<location> anden259_andno037::mineMyBaseLocations(const sensors &s)
 {
-
-
     return okNeighbors(s.myBase, s);
 }
 
@@ -114,9 +251,7 @@ int anden259_andno037::cost(const location &loc)
 // wat is the cost to walk on this location
 int anden259_andno037::cost(const int r, const int c)
 {
-
     const viewElements loc = board.getView(r, c);
-
 
     if (loc.pot_mine) {
         return 5000;
@@ -147,12 +282,8 @@ int anden259_andno037::cost(const int r, const int c)
         } break;
         default: std::cout << "ERROR displaying board - an unknown status was stored in square " << r << "," << c;
             return 0;
-
         }
     }
-
-
-
 }
 
 
@@ -183,7 +314,6 @@ bool anden259_andno037::isOkToMove(const int r, const int c, const sensors &s)
     }
 
     return true;
-
 }
 
 
@@ -202,6 +332,7 @@ action anden259_andno037::mineLocation(const sensors &s, location to)
     }
 
 }
+
 // go to a location in a line
 action anden259_andno037::goToLocationStupid(const sensors &s, const location& to)
 {
@@ -236,7 +367,6 @@ list<location> anden259_andno037::reconstructPath(map<location, location, classC
     }
     if (is) {
         locationList = reconstructPath(cameFrom, cameFrom[current]);
-
     }
 
     locationList.push_back(current);
@@ -247,16 +377,13 @@ list<location> anden259_andno037::reconstructPath(map<location, location, classC
 int anden259_andno037::calcDistance(const location& from, const location& to)
 {
     return max((from.r - to.r) * (from.r - to.r), (from.c - to.c) * (from.c - to.c));
-    //return (from.r - to.r)*(from.r - to.r) + (from.c - to.c)*(from.c - to.c);
 }
-
 
 // astar implementation to find you way.
 list<location> anden259_andno037::aStar(const sensors &s, const location& to)
 {
     set<location, classCompLocation> closedset;
     set<location, classCompLocation> openset {s.me};
-    // <location,location> cameFrom;
     map< location, location, classCompLocation> cameFrom;
 
     map< location, int, classCompLocation> gScore {pair<location, int>(s.me, 0)};
@@ -307,13 +434,10 @@ list<location> anden259_andno037::aStar(const sensors &s, const location& to)
 
 }
 
-
-
 // move with a star.
 action anden259_andno037::goToLocation(const sensors &s, const location& to)
 {
     action move;
-    // TODO: kan fastna och returnerna move från föregående drag.
     list<location> myPath = aStar(s, to);
 
     list<location>::iterator i;
@@ -344,8 +468,6 @@ action anden259_andno037::pillageAndDodge(const sensors &s)
     } else {
         return randomStep(s);
     }
-
-
 }
 
 // move a random step
@@ -358,18 +480,10 @@ action anden259_andno037::randomStep(const sensors &s)
     int ran = rand() % neighborList.size();
 
     for (int i = 0; i < ran; ++i) {
-
         neighborList.pop_back();
-
     }
-
-
     return goToLocation(s, neighborList.back());
-
-
-
 }
-
 
 action anden259_andno037::goToMyBase(const sensors &s)
 {

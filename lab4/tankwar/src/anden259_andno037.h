@@ -1,11 +1,55 @@
-#ifndef ANDEN259_ANDNO037_H
-#define ANDEN259_ANDNO037_H
-
 /*
  * anden259
  * andno037
  *
  */
+
+#ifndef ANDEN259_ANDNO037_H
+#define ANDEN259_ANDNO037_H
+
+#include<vector>
+#include "Board.h"
+
+namespace anden259_andno037_N {
+
+struct viewElements {
+    bool unknown{true};
+    bool mine{false};
+    bool op_path{false};
+    bool pot_mine{false};
+    status stat;
+};
+
+class TView
+{
+    std::vector<std::vector<viewElements> > board;
+public:
+    TView() = default;
+    ~TView() = default;
+    void setStatus(const location& loc, const status &s);
+    void setStatus(int r, int c, const status &s);
+    void setMine(int r,int c);
+    void setMine(const location& loc);
+
+    void setPotentialMine(int r,int c);
+    void setPotentialMine(const location& loc);
+
+    void setOppPath(int r,int c);
+    void setOppPath(const location& loc);
+
+    void displayView(const sensors);
+    void clear();
+    void initView();
+    status getStatus(int r,int c);
+    status getStatus(const location& loc);
+
+    viewElements getView(const location& loc);
+    viewElements getView(int r,int c);
+};
+
+}
+
+// ---------------------------------------------------------------------------- //
 
 #include <map>
 #include <vector>
@@ -14,7 +58,7 @@
 
 #include "Board.h"
 #include "Tank.h"
-#include "view.h"
+
 
 using namespace anden259_andno037_N;
 
@@ -33,17 +77,8 @@ public:
     anden259_andno037();
     ~anden259_andno037() = default;
 
-    /*
-     * this simple player class fires at the enemy every turn (regardless of ammo remaining)
-     * and misses every time the other player is moving since it fires at where the enemy is, and
-     * not where the enemy will be. Keep in mind that after you fire, the opponent gets a turn
-     * (to possibly move out of the way), and then the bullet hits. This class uses the base class
-     * fireAtOpp(sensors) method to fire at the current position of the enemy. Please note that
-     * this only has the possibility of hitting the enemy if they 'sit' on their subsequent turn.
-     */
     action doYourThing(const sensors&) override;
     string taunt(const string&) const override;
-
 
 private:
 
@@ -63,10 +98,6 @@ private:
     action goToMyBase(const sensors &s);
     action mineLocation(const sensors &s, location to);
 
-
-
-    // TODO: fundera på om vi vill ha en path lagrad i klassen som vi kan följa istället för att köra A* varje gång. anropa bara A* om vi inte kan gå.
-
     bool isOkToMove(const location &to, const sensors& s);
     bool isOkToMove(const int r, const int c, const sensors& s);
     bool isMoveable(const int r, const int c, const sensors& s);
@@ -76,19 +107,10 @@ private:
     int cost(const int r, const int c);
     int cost(const location &loc);
 
-
-
     // any data that I want to retain for my tank - probably want to store some tank state information
     TView board;
     size_t matchNumber {0};
     map<size_t , map<size_t , const sensors> > historyMap;
-
-
 };
-
-
-
-
-
 
 #endif // ANDEN259_ANDNO037_H
