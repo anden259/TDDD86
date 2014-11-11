@@ -41,8 +41,8 @@ const int POWERUP_MINES = 5;		// number of additional mines you get for the "m" 
 const int MINES_PER_PLAYER = 5;		// number of mines each player starts with
 const int START_AMMO = 0;			// number of tank bullets each player starts with
 
-const int MAX_OBS_SIZE = 12;			// maximum size of each obstacle cluster
-const int NUM_OBS_CLUSTERS = 25;		// number of obstacle clusters on the map
+const int MAX_OBS_SIZE = 40;			// maximum size of each obstacle cluster
+const int NUM_OBS_CLUSTERS = 40;		// number of obstacle clusters on the map
 
 /**************************************************************
  * DO NOT MODIFY BELOW THIS LINE OR THE GAME WILL NOT FUNCTION

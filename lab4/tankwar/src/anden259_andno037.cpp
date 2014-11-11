@@ -13,6 +13,7 @@ void TView::initView()
 {
     board.reserve(BOARD_ROWS);
     board.clear();
+    // Initiate our view of the board.
     for (int r = 0; r < BOARD_ROWS; ++r) {
         board.push_back(std::vector<viewElements> {});
         board[r].reserve(BOARD_COLS);
@@ -59,6 +60,7 @@ void TView::setMine(int r, int c)
 {
     board[r][c].mine = true;
 }
+
 void TView::setPotentialMine(const location& loc)
 {
     setPotentialMine(loc.r, loc.c);
@@ -97,33 +99,33 @@ void TView::displayView(const sensors)
         for (int col = 0; col < BOARD_COLS; col++) {
 
             if (board[row][col].mine) {
-                cout << '^';
+                cout << '^';                // Mine
             } else if (board[row][col].pot_mine) {
-                cout << 'v';
+                cout << 'v';                // Potential Mine
             } else if (board[row][col].op_path) {
-                cout << 'X';
+                cout << 'X';                // Oponent path
             } else if (board[row][col].unknown) {
-                cout << '.';
+                cout << '.';                // Unknown
             } else {
 
                 switch (board[row][col].stat) {
                 case  edge     : {
-                    std::cout << "=";
+                    std::cout << "="; // Wall
                 } break;
                 case  obs      : {
-                    std::cout << "*";
+                    std::cout << "*"; // Obsticle
                 } break;
                 case  nada     : {
-                    std::cout << " ";
+                    std::cout << " "; // Nothing
                 } break;
                 case pu_ammo   : {
-                    std::cout << "b";
+                    std::cout << "b"; // Power-up Ammo
                 } break;
                 case pu_mines  : {
-                    std::cout << "m";
+                    std::cout << "m"; // Power-up Mine
                 } break;
                 case pu_points : {
-                    std::cout << "p";
+                    std::cout << "p"; // Power-up Points
                 } break;
                 default: std::cout << "ERROR displaying board - an unknown status was stored in square " << row << "," << col;
 
@@ -157,12 +159,12 @@ anden259_andno037::anden259_andno037():
 // and save the info of this round for later use
 void anden259_andno037::update_status(const sensors &s)
 {
-
     historyMap[matchNumber].insert(pair<size_t, const sensors>(s.turn, s));
     board.setOppPath(s.opp);
-// to see if the oppnent is siting
+
+    // to see if the oppnent is siting
     if (s.turn != 1 && historyMap[matchNumber][s.turn - 1].opp == s.opp) {
-        board.setPotentialMine(s.opp);
+        board.setPotentialMine(s.opp); // set potential mine
     }
 
     board.setStatus(s.me.r - 1, s.me.c - 1, s.look[0]);
@@ -176,42 +178,43 @@ void anden259_andno037::update_status(const sensors &s)
     board.setStatus(s.me.r + 1, s.me.c - 1, s.look[6]);
     board.setStatus(s.me.r + 1, s.me.c, s.look[7]);
     board.setStatus(s.me.r + 1, s.me.c + 1, s.look[8]);
-
-
 }
-// things the tank can do
+
 action anden259_andno037::doYourThing(const sensors &s)
 {
+    // Check if a new round have started.
     if (s.turn == 1) {
         ++matchNumber;
+        // Save match
         historyMap[matchNumber] = map<size_t, const sensors> {};
         board.clear();
     }
 
-    // TODO: pot_mine, opp_path
     update_status(s);
-    //board.displayView(s);
+    //board.displayView(s); // Display our view of the board.
+
+    // Mine our base.
     if ((s.myMines != 0) && (mineMyBaseLocations(s).size() > 0)) {
         return mineLocation(s, mineMyBaseLocations(s).front());
     } else {
-
+        // Head for the opponents base and try to win the game!
         return pillageAndDodge(s);
     }
 }
 
 string anden259_andno037::taunt(const string &otherguy) const
 {
-    return "TJENA!! " + otherguy;
+    return "TJENA " + otherguy + "!!";
 }
 
-// return a list of all the neighbors a round the base you can put a mine
+// return a list of all the neighbors around the base where you can put a mine
 list<location> anden259_andno037::mineMyBaseLocations(const sensors &s)
 {
     return okNeighbors(s.myBase, s);
 }
 
 
-// return a list of all the neighbor a round loc you can move to
+// return a list of all the neighbor around locaction where you can move to
 list<location> anden259_andno037::okNeighbors(const location& loc, const sensors& s)
 {
     list<location> locations;
@@ -229,11 +232,10 @@ list<location> anden259_andno037::okNeighbors(const location& loc, const sensors
     return locations;
 }
 
-// is the location moveable at all
+// is it possible to move to the location at all?
 bool anden259_andno037::isMoveable(const int r, const int c, const sensors &s)
 {
     if (s.opp.r == r && s.opp.c == c) return false;
-    //if (board.getView(r, c).unknown) return true;
     if (board.getView(r, c).stat == edge) return false;
     return true;
 }
@@ -243,12 +245,13 @@ bool anden259_andno037::isMoveable(const location &loc, const sensors &s)
     return isMoveable(loc.r, loc.c, s);
 }
 
+// Calculate the cost of the move.
 int anden259_andno037::cost(const location &loc)
 {
     return cost(loc.r, loc.c);
 }
 
-// wat is the cost to walk on this location
+// what is the cost to walk on this location
 int anden259_andno037::cost(const int r, const int c)
 {
     const viewElements loc = board.getView(r, c);
@@ -300,8 +303,9 @@ bool anden259_andno037::isOkToMove(const int r, const int c, const sensors &s)
     if (!isMoveable(r,c ,s)){
         return false;
     }
+
     if (loc.mine) return false;
-    if (loc.pot_mine)return false;//TODO !!!
+    if (loc.pot_mine) return false;
     if (loc.unknown) return true;
 
     switch (loc.stat) {
@@ -316,21 +320,17 @@ bool anden259_andno037::isOkToMove(const int r, const int c, const sensors &s)
     return true;
 }
 
-
-// mine this location if not there go to the location.
+// mine location "to", if not there, go to the location.
 action anden259_andno037::mineLocation(const sensors &s, location to)
 {
-    // TODO check if mined
     if (s.me == to) {
         action doMine;
         doMine.theMove = mine;
         board.setMine(s.me);
         return doMine;
     } else {
-        //return goToLocationStupid(s, to);
         return goToLocation(s, to);
     }
-
 }
 
 // go to a location in a line
@@ -357,14 +357,18 @@ action anden259_andno037::goToLocationStupid(const sensors &s, const location& t
     return move;
 }
 
+// ----- A* ----- //
+
 // creating a list of the locations to your goal.
 list<location> anden259_andno037::reconstructPath(map<location, location, classCompLocation> &cameFrom, const location &current)
 {
     bool is = false;
     list<location> locationList;
+
     if (cameFrom.find(current) != cameFrom.end()) {
         is = true;
     }
+
     if (is) {
         locationList = reconstructPath(cameFrom, cameFrom[current]);
     }
@@ -373,21 +377,21 @@ list<location> anden259_andno037::reconstructPath(map<location, location, classC
     return locationList;
 }
 
-
 int anden259_andno037::calcDistance(const location& from, const location& to)
 {
     return max((from.r - to.r) * (from.r - to.r), (from.c - to.c) * (from.c - to.c));
 }
 
-// astar implementation to find you way.
+// A* implementation to find your way.
 list<location> anden259_andno037::aStar(const sensors &s, const location& to)
 {
-    set<location, classCompLocation> closedset;
-    set<location, classCompLocation> openset {s.me};
-    map< location, location, classCompLocation> cameFrom;
+    set<location, classCompLocation> closedset; // The set of nodes already evaluated.
+    set<location, classCompLocation> openset {s.me}; // The set of nodes to be evaluated, starting with our location
+    map< location, location, classCompLocation> cameFrom; // Navigated nodes.
 
-    map< location, int, classCompLocation> gScore {pair<location, int>(s.me, 0)};
-    map< location, int, classCompLocation> fScore {pair<location, int>(s.me , gScore[s.me] +  calcDistance(s.me, to))}; // Board::getLine(s.me, to).size())};
+    map< location, int, classCompLocation> gScore {pair<location, int>(s.me, 0)}; // Cost along best known path.
+    // Approximate cost
+    map< location, int, classCompLocation> fScore {pair<location, int>(s.me , gScore[s.me] +  calcDistance(s.me, to))};
 
     while (!openset.empty()) {
         location current = *(openset.begin());
@@ -398,29 +402,31 @@ list<location> anden259_andno037::aStar(const sensors &s, const location& to)
         }
 
         if (current == to) {
-
             return reconstructPath(cameFrom, to);
         }
 
         openset.erase(current);
         closedset.insert(current);
         location neighbor;
+        // loop over all neighbors
         for (int r = -1; r <= 1 ; ++r) {
             for (int c = -1; c <= 1; ++c) {
                 neighbor.r = current.r + r;
                 neighbor.c = current.c + c;
+                // Check all locations around the neighbor and check that it is moveable.
                 if (!(r == 0 && c == 0) && isMoveable(neighbor, s)) {
 
                     if (closedset.find(neighbor) != closedset.end()) {
                         continue;
                     }
+
                     int tempGscore = gScore[current] + cost(neighbor);
 
                     if ((openset.find(neighbor) == openset.end()) || (tempGscore < gScore[neighbor])) {
                         if (s.me != current)
                             cameFrom[neighbor] = current;
                         gScore[neighbor] = tempGscore;
-                        fScore[neighbor] = gScore[neighbor] + calcDistance(s.me, to); // Board::getLine(neighbor, to).size();
+                        fScore[neighbor] = gScore[neighbor] + calcDistance(s.me, to);
                         if (openset.find(neighbor) == openset.end()) {
                             openset.insert(neighbor);
                         }
@@ -429,10 +435,12 @@ list<location> anden259_andno037::aStar(const sensors &s, const location& to)
             }
         }
     }
-    cout << "no path\n";
+    // no path found, return an empty list.
     return list<location> {};
 
 }
+
+// ----- end A* ----- //
 
 // move with a star.
 action anden259_andno037::goToLocation(const sensors &s, const location& to)
@@ -477,6 +485,7 @@ action anden259_andno037::randomStep(const sensors &s)
     if (neighborList.empty()) {        
         return goToLocation(s, s.me);
     }
+
     int ran = rand() % neighborList.size();
 
     for (int i = 0; i < ran; ++i) {
@@ -487,6 +496,5 @@ action anden259_andno037::randomStep(const sensors &s)
 
 action anden259_andno037::goToMyBase(const sensors &s)
 {
-
     return goToLocation(s, s.myBase);
 }

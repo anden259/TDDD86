@@ -107,7 +107,6 @@ private:
     int cost(const int r, const int c);
     int cost(const location &loc);
 
-    // any data that I want to retain for my tank - probably want to store some tank state information
     TView board;
     size_t matchNumber {0};
     map<size_t , map<size_t , const sensors> > historyMap;
