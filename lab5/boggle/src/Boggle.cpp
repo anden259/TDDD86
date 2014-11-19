@@ -79,10 +79,10 @@ void Boggle::generate_words_help(int r, int c, string current)
 
     for (int dr = -1; dr <= 1; ++dr) {
         int new_row = r + dr;
-        if (new_row > 0 && new_row < BOARD_SIZE) {
+        if (new_row >= 0 && new_row < BOARD_SIZE) {
             for (int dc = -1; dc <= 1; ++dc) {
                 int new_col = c + dc;
-                if (new_col > 0 && new_col < BOARD_SIZE && !visited[new_row][new_col]) {
+                if (new_col >= 0 && new_col < BOARD_SIZE && !visited[new_row][new_col]) {
                     generate_words_help(new_row, new_col, current);
                 }
             }
@@ -120,7 +120,8 @@ bool Boggle::generate_user_board(string input)
 
 bool Boggle::add_user_word(string input)
 {
-    if (computer_set.contains(input)) {
+    //if (computer_set.contains(input)) { // This is much better, but we are not allowed to use it.
+    if (lex.contains(input)  && is_posible(input)) {
         user_set.add(input);
         computer_set.remove(input);
         user_points += input.size() - 3;
@@ -128,6 +129,8 @@ bool Boggle::add_user_word(string input)
     } else {
         return false;
     }
+
+
 }
 
 int Boggle::get_user_word_count() const
@@ -163,3 +166,57 @@ string Boggle::get_computer_words()
 {
     return computer_set.toString();
 }
+
+
+////////////////////////////////////////////////////////////
+
+bool Boggle::is_posible(string input)
+{
+    bool ret = false;
+    for (int r = 0; r < BOARD_SIZE; ++r) {
+        for (int c = 0; c < BOARD_SIZE; ++c) {
+            is_posible_help(ret, r, c, input);
+            if (ret) return ret;
+        }
+    }
+
+    return ret;
+
+}
+
+void Boggle::is_posible_help(bool& pos, int r, int c, string input)
+{
+
+    if (input.size() == 1 && input[0] == board[r][c].at(0)) {
+        pos = true;
+        return;
+    }
+    if (input.empty() || pos || input.at(0) != board[r][c].at(0)) {
+        return;
+    } else {
+        input.erase(0, 1);
+    }
+
+    visited[r][c] = true;
+
+    for (int dr = -1; dr <= 1; ++dr) {
+        int new_row = r + dr;
+        if (new_row >= 0 && new_row < BOARD_SIZE) {
+            for (int dc = -1; dc <= 1; ++dc) {
+                int new_col = c + dc;
+                if (new_col >= 0 && new_col < BOARD_SIZE && !visited[new_row][new_col]) {
+                    is_posible_help(pos, new_row, new_col, input);
+                    if (pos) {
+                        visited[r][c] = false;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+    visited[r][c] = false;
+    return;
+
+}
+
+

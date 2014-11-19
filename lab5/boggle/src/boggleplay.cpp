@@ -27,14 +27,15 @@ void playOneGame(Boggle& boggle)
     }
     boggle.generate_words();
 
-    //cout << boggle.get_computer_words() << endl;
+    cout << boggle.get_computer_words() << endl;
 
     while (true) {
+
         cout << "It's your turn!" << endl;
         cout << boggle.board_string() << endl;
 
         getline(cin, input);
-        clearConsole();
+        //clearConsole();
         if (input.size() == 0) {
             break;
         }

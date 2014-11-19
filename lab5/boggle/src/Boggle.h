@@ -30,6 +30,11 @@ public:
 
     bool add_user_word(string input);
 
+    //
+    bool is_posible(string input);
+    void is_posible_help(bool& pos, int r, int c, string input);
+    //
+
     int get_user_word_count() const;
     int get_user_points() const;
     string get_user_words(); // Set<T>.toString() is NOT const, therfore we can't const declare.
