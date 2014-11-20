@@ -16,6 +16,7 @@ static string CUBES[NUM_CUBES] = {        // the letters on all 6 sides of every
     "EIOSST", "ELRTTY", "HIMNQU", "HLNNRZ"
 };
 
+// Genrate a random board, and set our visited grid to false everywhere.
 void Boggle::generate_board()
 {
     for (int i = 0; i < NUM_CUBES; ++i) {
@@ -36,6 +37,7 @@ void Boggle::generate_board()
     }
 }
 
+// Get all letters from the board, so it can be printed to screen.
 string Boggle::board_string()
 {
     string ret;
@@ -48,6 +50,7 @@ string Boggle::board_string()
     return ret;
 }
 
+// ressets the board to a valid starting state.
 void Boggle::reset()
 {
     user_points = 0;
@@ -55,8 +58,10 @@ void Boggle::reset()
     computer_set.clear();
 }
 
+// generate all possible words for the computer
 void Boggle::generate_words()
 {
+    // loop over all starting letters
     for (int r = 0; r < BOARD_SIZE; ++r) {
         for (int c = 0; c < BOARD_SIZE; ++c) {
             generate_words_help(r, c, "");
@@ -64,6 +69,7 @@ void Boggle::generate_words()
     }
 }
 
+// build all words from the starting letter recursevly.
 void Boggle::generate_words_help(int r, int c, string current)
 {
     visited[r][c] = true;
@@ -77,6 +83,7 @@ void Boggle::generate_words_help(int r, int c, string current)
         computer_set.insert(current);
     }
 
+    // continue to all neighbours that is unvisited.
     for (int dr = -1; dr <= 1; ++dr) {
         int new_row = r + dr;
         if (new_row >= 0 && new_row < BOARD_SIZE) {
@@ -92,10 +99,9 @@ void Boggle::generate_words_help(int r, int c, string current)
     return;
 }
 
-
+// If the user wants to input a particulare starting board, we accept the input here.
 bool Boggle::generate_user_board(string input)
 {
-    //cerr << "\n!!" << input << "!!\n";
     if (input.size() == 16) {
         for (auto c : input) {
             // Check if characters in the input is NOT in A-Z
@@ -107,6 +113,7 @@ bool Boggle::generate_user_board(string input)
         return false;
     }
 
+    // if it was valid input, genereate the board.
     int i = 0;
     for (int r = 0; r < BOARD_SIZE; ++r) {
         for (int c = 0; c < BOARD_SIZE; ++c) {
@@ -118,10 +125,11 @@ bool Boggle::generate_user_board(string input)
     return true;
 }
 
+// adds a word to the users list if it is valid.
 bool Boggle::add_user_word(string input)
 {
     //if (computer_set.contains(input)) { // This is much better, but we are not allowed to use it.
-    if (lex.contains(input)  && is_posible(input)) {
+    if (input.size() >= 4 && lex.contains(input)  && is_posible(input)) {
         user_set.add(input);
         computer_set.remove(input);
         user_points += input.size() - 3;
@@ -133,11 +141,13 @@ bool Boggle::add_user_word(string input)
 
 }
 
+// counts the words in the users list
 int Boggle::get_user_word_count() const
 {
     return user_set.size();
 }
 
+// get the users word list as a string
 string Boggle::get_user_words()
 {
     return user_set.toString();
@@ -162,6 +172,7 @@ int Boggle::get_computer_points() const
     return ret;
 }
 
+// get the computers word list as a string.
 string Boggle::get_computer_words()
 {
     return computer_set.toString();
@@ -170,20 +181,24 @@ string Boggle::get_computer_words()
 
 ////////////////////////////////////////////////////////////
 
+// is it possible to build the word by traversing the board?
 bool Boggle::is_posible(string input)
 {
     bool ret = false;
+    // start from all possitions on the board, and check if we can build the word from there.
     for (int r = 0; r < BOARD_SIZE; ++r) {
         for (int c = 0; c < BOARD_SIZE; ++c) {
             is_posible_help(ret, r, c, input);
-            if (ret) return ret;
+            // If we find a true result, return true
+            if (ret) return true;
         }
     }
-
     return ret;
-
 }
 
+// help function to the above, tries to build the words by traversing the board
+// stops a branch if it is impossible and continues done a correct one
+// returns true if the word can be built from the board, false otherwise.
 void Boggle::is_posible_help(bool& pos, int r, int c, string input)
 {
 
@@ -199,6 +214,7 @@ void Boggle::is_posible_help(bool& pos, int r, int c, string input)
 
     visited[r][c] = true;
 
+    // Is it possible to walk the word on the board?
     for (int dr = -1; dr <= 1; ++dr) {
         int new_row = r + dr;
         if (new_row >= 0 && new_row < BOARD_SIZE) {

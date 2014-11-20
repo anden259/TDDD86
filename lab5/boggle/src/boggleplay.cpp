@@ -27,7 +27,7 @@ void playOneGame(Boggle& boggle)
     }
     boggle.generate_words();
 
-    cout << boggle.get_computer_words() << endl;
+    //cout << boggle.get_computer_words() << endl; //top display what words the computer found.
 
     while (true) {
 
