@@ -12,7 +12,8 @@ map<int, int> buildFrequencyTable(istream& input)
     map<int, int> freqTable;
 
     while (true) {
-        int byte = input.get();
+        int byte = 0;
+        byte = input.get();
         if (byte == -1) {
             ++freqTable[PSEUDO_EOF];
             break;
@@ -69,7 +70,8 @@ void encodeData(istream& input, const map<int, string> &encodingMap, obitstream&
 {
     bool run = true;
     while (run) {
-        int byte = input.get();
+        int byte = 0;
+        byte = input.get();
         string code;
         if (byte == -1) {
             code = encodingMap.at(PSEUDO_EOF);
@@ -134,12 +136,15 @@ void compress(istream& input, obitstream& output)
 void decompress(ibitstream& input, ostream& output)
 {
     map<int, int>freqTable;
+    int character = 0;
+    int count = 0;
+    string ascii;
+
     input.get();
     bool run = true;
     while (run) {
-        string ascii;
-        int character;
-        int count;
+        character = 0;
+        count = 0;
         while (true) {
             char c = input.get();
             if (c == ':') {
@@ -158,6 +163,8 @@ void decompress(ibitstream& input, ostream& output)
                 ascii.clear();
                 break;
             } else if (c == '}') {
+                count = stoi(ascii);
+                ascii.clear();
                 run = false;
                 break;
             } else {
@@ -166,7 +173,9 @@ void decompress(ibitstream& input, ostream& output)
         }
         freqTable[character] = count;
     }
+
     HuffmanNode* tree = buildEncodingTree(freqTable);
+
     decodeData(input, tree, output);
     freeTree(tree);
 }
