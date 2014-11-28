@@ -113,23 +113,55 @@ void decodeData(ibitstream& input, HuffmanNode* encodingTree, ostream& output)
     }
 }
 
+/* Header structure
+ *
+ * +-----------------+-----------------+-----------------+ -  -  - +-----------------+-----------------+ -  -  -
+ * | #N header-pairs | byte            | frequency       |  .....  | N'th       byte | N'th frequency  | compressed data after header
+ * | 1-byte          | 1-byte          | 1-4 bytes       |         |                 |                 |
+ * +-----------------+-----------------+-----------------+ -  -  - +-----------------+-----------------+ -  -  -
+ *
+ * how frequency works
+ * the leading non-zero bits tells us how many extra bytes we need to hold the frequency of a byte
+ * e.g.
+ *
+ * 00000001 is 1
+ * 01111111 is 127, and the most that we can fit in 1 byte.
+ *
+ * 10000000 10000000 is 128 and requires 2 bytes to be represented.
+ * 10111111 11111111 is 16383 and the most that fit in 2 bytes
+ *
+ * so the leading 1-set bits tells us how many extra bytes we need to represent the frequency
+ * since the given code only support int's we decided to support a maximum of four extra bytes, that is almost one int.
+ *
+ */
 
+// Help function to write the header while encoding.
+void help_write_header_count(obitstream& output, unsigned int number)
+{
+    if (number <= 0x7f) {
+        output << (char) number;
+    } else if (number <= 0x3fff) {
+        output << (char)((number >> 8) | 0x80) << (char) number;
+    } else if (number <= 0x1fffff) {
+        output << (char)((number >> 16) | 0xC0) << (char)(number >> 8) << (char) number;
+    } else if (number <= 0xfffffff) {
+        output << (char)((number >> 24) | 0xE0) << (char)(number >> 16) << (char)(number >> 8) << (char) number;
+    }
+}
 
 // Compress in-data with huffman compression algorithm, and save the frequency table in the output header.
 void compress(istream& input, obitstream& output)
 {
     map<int, int>freqTable = buildFrequencyTable(input);
-    output << "{";
-    bool first = true;
+    // ignore eof
+    output << (char)(freqTable.size() - 1);
+
     for (auto pair : freqTable) {
-        if (!first) {
-            output << ", " << pair.first << ":" << pair.second;
-        } else {
-            output << pair.first << ":" << pair.second;
-            first = false;
+        if (pair.first != PSEUDO_EOF) {
+            output << (char)pair.first;
+            help_write_header_count(output, pair.second);
         }
     }
-    output << "}";
 
     input.clear();
     input.seekg(0, input.beg);
@@ -139,53 +171,47 @@ void compress(istream& input, obitstream& output)
 }
 
 
+
+// Help function for reading the header while decoding.
+int help_read_header_count(istream& input)
+{
+    unsigned int byte1 = input.get();
+    if((byte1 & 0xe0) == 0xe0) {
+        unsigned int byte2 = input.get();
+        unsigned int byte3 = input.get();
+        unsigned int byte4 = input.get();
+        return ((byte1 & 0x0f) << 24) | (byte2 << 16) | (byte3 << 8) | byte4;
+    } else if((byte1 & 0xc0) == 0xc0) {
+        unsigned int byte2 = input.get();
+        unsigned int byte3 = input.get();
+        return ((byte1 & 0x1f) << 16) | (byte2 << 8) | byte3;
+    } else if((byte1 & 0x80) == 0x80) {
+        unsigned int byte2 = input.get();
+        return ((byte1 & 0x3f) << 8) | byte2;
+    } else {
+        return byte1;
+    }
+}
+
 // Decompresses our huffman compressed indata with the help of the information in the header.
 void decompress(ibitstream& input, ostream& output)
 {
     map<int, int>freqTable;
-    int character = 0;
-    int count = 0;
-    string ascii;
 
-    input.get();
-    bool run = true;
-    while (run) {
-        character = 0;
-        count = 0;
-        while (true) {
-            char c = input.get();
-            if (c == ':') {
-                character = stoi(ascii);
-                ascii.clear();
-                break;
-            } else {
-                ascii += c;
-            }
-        }
-        while (true) {
-            char c = input.get();
-            if (c == ',') {
-                input.get();
-                count = stoi(ascii);
-                ascii.clear();
-                break;
-            } else if (c == '}') {
-                count = stoi(ascii);
-                ascii.clear();
-                run = false;
-                break;
-            } else {
-                ascii += c;
-            }
-        }
-        freqTable[character] = count;
+    int header_pairs = input.get();
+    for (int i = 0; i < header_pairs; ++i) {
+        int character = input.get();
+        int counter = help_read_header_count(input);
+        freqTable[character] = counter;
     }
+    freqTable[PSEUDO_EOF] = 1;
 
     HuffmanNode* tree = buildEncodingTree(freqTable);
 
     decodeData(input, tree, output);
     freeTree(tree);
 }
+
 
 // dealloc a huffman tree.
 void freeTree(HuffmanNode* node)
