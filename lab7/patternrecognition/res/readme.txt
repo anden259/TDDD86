@@ -29,14 +29,23 @@
  **********************************************************************/
 
 Brute:
-Is O(N^3) if you ignore the first values, 
-since it's mostly constant factors playing a big role on small data
+Is O(N^4) (average N^3)
+It's a loop in a loop in a loop in a loop, each loop is N or less.
 
 Sortering:
-Is O(N^2) 
+Is O(N^2)
+Stepping through each point once is N
+and then check the other points from their is N or less.
+
+map operator[] is logarithmic
+map insert is also logarithmic
+looping through our map and checking vector size is less then N
+rendering is constant
+
+conclusion N^2
 
 
-
+--------
 
 we used matlab to caluculate.
 
